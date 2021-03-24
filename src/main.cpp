@@ -13,7 +13,7 @@
 */
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
-//Importing Public Libraries//
+//Importing Public Libraries//a
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -55,6 +55,18 @@ void Inertial_reset(){
 
 int Inertail_rotation(){
   return(fabs(inertial1.rotation() + inertial2.rotation()));
+  //return (fabs(inertial2.rotation()))
+}
+
+int sdsifijhdsf() {
+  while(true) {
+    Controller1.Screen.clearLine();
+    Controller1.Screen.print(Inertail_rotation());
+    
+    vexDelay(300);
+  }
+
+  return 0;
 }
 
 void AutoFunctions::resetPID() {
@@ -329,24 +341,24 @@ void forwardintakestop(){
 void skills1(){ // Left = - Right = +
 //////////1st row ///////////
   ForwardIntakePD(1000,0.25,0,0.1);
-  vexDelay(100);
+  vexDelay(250);
   TurnLeftPD(138,0.8,0.1);
   forwardintakestop();
-  vexDelay(200);
+  vexDelay(300);
   ForwardPD(1130,0.25,0,0.1);
   shoot(300); // 1st goal 
   //stopball();
-  vexDelay(150);
+  vexDelay(300);
   BackwardPD(590,0.2,0.1);
   //stopshoot();
-  vexDelay(200);
+  vexDelay(400);
   TurnRightPD(138,0.9,0.1);
-  vexDelay(200);
+  vexDelay(400);
   ForwardIntakePD(1650,0.25,0,0.1);
   forwardintakestop();
   TurnLeftPD(90,0.7,0.1);
   ForwardPD(335,0.2,0,0.1);
-  shoot(300); // 2nd goal
+  shoot(400); // 2nd goal
   //stopball();
   vexDelay(300);
   BackwardPD(295,0.2,0.1);
@@ -429,10 +441,10 @@ void skills2(){
   vexDelay(200);
   TurnRightPD(138,0.9,0.1);
   vexDelay(200);
-  ForwardIntakePD(1700,0.25,0,0.1);
+  ForwardIntakePD(1660,0.25,0,0.1);
   forwardintakestop();
   TurnLeftPD(92,0.7,0.1);
-  ForwardPD(320,0.2,0,0.1); //2nd goal forward
+  ForwardPD(360,0.2,0,0.1); //2nd goal forward
   shoot(300);
   vexDelay(200);
   BackwardPD(750,0.25,0.1);
@@ -442,7 +454,7 @@ void skills2(){
   shoot(400); // 3rd goal
   vexDelay(150);
   ///////// 2nd row /////////
-  BackwardPD(380,0.3,0.1);
+  BackwardPD(400,0.3,0.1);
   TurnRightPD(110,0.7,0.1); //3rd to 4th angle 
   ForwardIntakePD(1900,0.30,0,0.1);//3rd to 4th transition
   forwardintakestop();
@@ -493,26 +505,27 @@ void skills2(){
   
 }
 void skills3(){
-  ForwardIntakePD(1000,0.27,0,0.3);
-  vexDelay(50);
-  TurnLeftPD(138,0.75,0.3);
+  ForwardIntakePD(970,0.27,0,0.3);
+  vexDelay(200);
+  TurnLeftPD(135,0.75,0.3);
   forwardintakestop();
-  vexDelay(120);
-  ForwardPD(1180,0.4,0,0.3);
+  vexDelay(150);
+  ForwardPD(1240,0.4,0,0.3);
   shoot(350);
-  vexDelay(120);
-  BackwardPD(550,0.25,0.1);
-  vexDelay(250);
+  vexDelay(300);
+  BackwardPD(580,0.25,0.1);
+  vexDelay(500);
   TurnRightPD(141,0.9,0.1);
   vexDelay(300);
-  ForwardIntakePD(1800,0.25,0,0.3);
+  ForwardIntakePD(1780,0.25,0,0.3);
   forwardintakestop();
   TurnLeftPD(92,0.9,0.1);
   ForwardPD(300,0.3,0,0.1); //2nd goal forward
+  insuck(200);
   shoot(300);
   vexDelay(200);
   BackwardPD(800,0.25,0.1);
-  TurnRightPD(62,0.7,0.1);
+  TurnRightPD(64,0.7,0.1);
   vexDelay(200);
   ForwardPD(2320,0.27,0,0.1);
   insuck(200);
@@ -520,32 +533,34 @@ void skills3(){
   vexDelay(150);
   ///////// 2nd row /////////
   BackwardPD(380,0.3,0.1);
+  vexDelay(150);
   TurnRightPD(115,0.7,0.1); //3rd to 4th angle 
   ForwardIntakePD(2000,0.30,0,0.1);//3rd to 4th transition
   forwardintakestop();
   TurnLeftPD(90,0.9,0.1);
-  ForwardPD(335,0.3,0,0.1); //4th goal forward
+  ForwardPD(390,0.3,0,0.1); //4th goal forward
   shoot(400);
   vexDelay(100);
   BackwardPD(340,0.3,0.1);
-  TurnRightPD(93,0.8,0.1);
-  vexDelay(100);
-  ForwardIntakePD(1800,0.3,0,0.1);
+  vexDelay(150);
+  TurnRightPD(90,0.8,0.1);
+  vexDelay(150);
+  ForwardIntakePD(1830,0.3,0,0.1);
   forwardintakestop();
   TurnLeftPD(45,0.8,0.1);
-  ForwardPD(700,0.3,0,0.1);
+  ForwardPD(1100,0.3,0,0.1);
   shoot(400);
   vexDelay(150);
   BackwardPD(560,0.3,0.1);
   vexDelay(200);
-  TurnRightPD(132, 0.8, 0.3);
-  ForwardIntakePD(1870, 0.27, 0, 0.1);
+  TurnRightPD(129, 0.8, 0.3);
+  ForwardIntakePD(1790, 0.27, 0, 0.1);
   TurnLeftPD(92,0.9,0.1);
   ForwardPD(350,0.3,0,0.1);
   shoot(400);
   BackwardPD(335,0.3,0.1);
   TurnRightPD(60,0.8,0.1);
-  ForwardIntakePD(2000, 0.3, 0, 0.1);
+  ForwardIntakePD(2100, 0.3, 0, 0.1);
   shoot(400);
 
  /*///////// 3rd row /////////
@@ -587,6 +602,7 @@ void test(){
 }
 
 void autonomous(){ // Forward KP = 0.2 KD = 0.1
+
 
  vexDelay(200);
  skills3();
@@ -696,9 +712,10 @@ void pre_auton(){
   inertial1.calibrate();
   inertial2.calibrate();
   
-  while(inertial1.isCalibrating() && inertial2.isCalibrating()){
+  waitUntil(!inertial1.isCalibrating() && !inertial2.isCalibrating());
   task::sleep(100);
-  }
+
+  task aosidjfhosidfh = task(sdsifijhdsf);
   
 }
 
