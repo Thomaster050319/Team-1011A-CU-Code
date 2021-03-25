@@ -14,24 +14,24 @@ using namespace vex;
 
 void skills3(){
 
-  ForwardIntakePD(970,0.20,0,0.3);
+  ForwardIntakePD(1000,0.20,0,0.3);
   vexDelay(200);
   TurnLeftPD(140,0.75,0.3);
   forwardintakestop();
   vexDelay(150);
-  ForwardPD(1240,0.4,0,0.3);
+  ForwardPD(1200,0.4,0,0.3);
   shoot(350);
 
 
   vexDelay(300);
   BackwardPD(580,0.25,0.1);
   vexDelay(500);
-  TurnRightPD(141,0.9,0.1);
+  TurnRightPD(140,0.9,0.1);
   vexDelay(300);
   ForwardIntakePD(1780,0.25,0,0.3);
   forwardintakestop();
   TurnLeftPD(89,0.9,0.1);
-  ForwardPD(300,0.3,0,0.1); //2nd goal forward
+  ForwardPD(320,0.3,0,0.1); //2nd goal forward
   insuck(200);
   shoot(300);
 
@@ -40,7 +40,7 @@ void skills3(){
   BackwardPD(800,0.25,0.1);
   TurnRightPD(64,0.7,0.1);
   vexDelay(200);
-  ForwardPD(2320,0.27,0,0.1);
+  ForwardPD(2220,0.27,0,0.1);
   insuck(200);
   shoot(600); // 3rd goal
 
@@ -111,7 +111,7 @@ void skills3(){
   TurnLeftPD(90,0.8,0.1);
   shoot(400);
 
-  
+
   vexDelay(150);
   TurnRightPD(180, 0.8, 0.1);
   ///////// Middle Goal /////////
