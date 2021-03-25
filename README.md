@@ -6,11 +6,8 @@ The Code is now written in C++. The program can be read by other IDE's (but the 
 
 ## Things that need to be done
 
-- [X] Convert to C++
-- [X] Driver Control Code
-- [X] Autonoumous Code
-- [X] self-coded device constructors
-- [X] Drivetrain which allows access to individual motors
-- [X] PID
-- [X] Controller screens
-- [X] slew
+- [X] Write Code
+- [ ] Better PID
+- [ ] Brain Display
+- [ ] Controller Display improvements
+- [ ] Liams controls

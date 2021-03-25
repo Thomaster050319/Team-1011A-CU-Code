@@ -21,6 +21,8 @@ void skills1(){ // Left = - Right = +
   vexDelay(300);
   ForwardPD(1130,0.25,0,0.1);
   shoot(300); // 1st goal 
+
+
   //stopball();
   vexDelay(300);
   BackwardPD(590,0.2,0.1);
@@ -33,6 +35,8 @@ void skills1(){ // Left = - Right = +
   TurnLeftPD(90,0.7,0.1);
   ForwardPD(335,0.2,0,0.1);
   shoot(400); // 2nd goal
+
+
   //stopball();
   vexDelay(300);
   BackwardPD(295,0.2,0.1);
@@ -43,6 +47,8 @@ void skills1(){ // Left = - Right = +
   vexDelay(200);
   ForwardPD(380,0.25,0,0.1);
   shoot(400); // 3rd goal
+
+
   vexDelay(150);
   ///////// 2nd row /////////
   BackwardPD(380,0.3,0.1);
@@ -52,9 +58,10 @@ void skills1(){ // Left = - Right = +
   TurnLeftPD(90,0.9,0.1);
   ForwardPD(335,0.3,0,0.1);
   shoot(400); // 4th goal
+
+
   vexDelay(100);
   BackwardPD(290,0.3,0.1);
-
   TurnRightPD(94,0.8,0.1);
   vexDelay(100);
   ForwardIntakePD(1700,0.3,0,0.1);
@@ -63,6 +70,8 @@ void skills1(){ // Left = - Right = +
   ForwardPD(580,0.3,0,0.1);
   shoot(400);
   BackwardPD(580, 0.3, 0.1);
+
+
   /*///////// 3rd row /////////
   TurnRightPD(161, 0.8, 0.1);
   ForwardIntakePD(1700, 0.3, 0, 0.1); 
@@ -70,6 +79,8 @@ void skills1(){ // Left = - Right = +
   TurnLeftPD(19,0.8,0.1);
   ForwardIntakePD(1480, 0.3, 0, 0.1);
   shoot(400);
+
+
   vexDelay(150);
   BackwardPD(630, 0.3, 0.1);
   TurnRightPD(90,0.8,0.1);
@@ -77,6 +88,8 @@ void skills1(){ // Left = - Right = +
   TurnLeftPD(45,0.8,0.1);
   ForwardPD(500,0.3,0,0.1);
   shoot(400);
+
+
   vexDelay(150);
   BackwardPD(500, 0.3, 0.1);
   TurnRightPD(135,0.8,0.1);
@@ -84,6 +97,8 @@ void skills1(){ // Left = - Right = +
   ForwardIntakePD(1700,0.3,0,0.1);
   TurnLeftPD(90,0.8,0.1);
   shoot(400);
+
+
   vexDelay(150);
   TurnRightPD(180, 0.8, 0.1);
   ///////// Middle Goal /////////

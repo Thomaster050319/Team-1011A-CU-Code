@@ -7,12 +7,6 @@
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
-// ---- PORT NUMBERS FOR VEXCODE CONFIGURED DEVICES ----
-/*
-
-*/
-// ---- END VEXCODE CONFIGURED DEVICES ----
-
 #include "vex.h"
 #include "global.h"
 

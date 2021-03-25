@@ -13,6 +13,7 @@
 using namespace vex;
 
 void skills2(){
+
   ForwardIntakePD(1050,0.20,0,0.1);
   vexDelay(100);
   TurnLeftPD(140,0.6,0.1);
@@ -20,6 +21,8 @@ void skills2(){
   vexDelay(200);
   ForwardPD(1180,0.4,0,0.1);
   shoot(350);
+
+
   vexDelay(150);
   BackwardPD(650,0.25,0.1);
   vexDelay(200);
@@ -30,6 +33,8 @@ void skills2(){
   TurnLeftPD(92,0.7,0.1);
   ForwardPD(360,0.2,0,0.1); //2nd goal forward
   shoot(300);
+
+
   vexDelay(200);
   BackwardPD(750,0.25,0.1);
   TurnRightPD(63,0.7,0.1);
@@ -37,6 +42,8 @@ void skills2(){
   ForwardPD(2200,0.27,0,0.1);
   shoot(400); // 3rd goal
   vexDelay(150);
+
+
   ///////// 2nd row /////////
   BackwardPD(400,0.3,0.1);
   TurnRightPD(110,0.7,0.1); //3rd to 4th angle 
@@ -45,6 +52,8 @@ void skills2(){
   TurnLeftPD(90,0.9,0.1);
   ForwardPD(335,0.3,0,0.1); //4th goal forward
   shoot(400);
+
+
   vexDelay(100);
   BackwardPD(290,0.3,0.1);
   TurnRightPD(92,0.8,0.1);
@@ -54,6 +63,8 @@ void skills2(){
   TurnLeftPD(45,0.8,0.1);
   ForwardPD(550,0.3,0,0.1);
   shoot(400);
+
+
   /*vexDelay(150);
   BackwardPD(550,0.3,0.1);
   ///////// 3rd row /////////
@@ -63,6 +74,8 @@ void skills2(){
   TurnLeftPD(19,0.8,0.1);
   ForwardIntakePD(1480, 0.3, 0, 0.1);
   shoot(400);
+
+
   vexDelay(150);
   BackwardPD(630, 0.3, 0.1);
   TurnRightPD(90,0.8,0.1);
@@ -70,6 +83,8 @@ void skills2(){
   TurnLeftPD(45,0.8,0.1);
   ForwardPD(500,0.3,0,0.1);
   shoot(400);
+
+
   vexDelay(150);
   BackwardPD(500, 0.3, 0.1);
   TurnRightPD(135,0.8,0.1);
@@ -77,6 +92,8 @@ void skills2(){
   ForwardIntakePD(1700,0.3,0,0.1);
   TurnLeftPD(90,0.8,0.1);
   shoot(400);
+
+  
   vexDelay(150);
   TurnRightPD(180, 0.8, 0.1);
   ///////// Middle Goal /////////
