@@ -546,18 +546,18 @@ void skills3(){
   ForwardPD(1150,0.4,0,0.3);
   insuck(400);
   shoot(450);
-  vexDelay(200);
+  vexDelay(100);
   BackwardPD(695,0.25,0.1);
-  vexDelay(300);
+  vexDelay(100);
   TurnRightPD(144,0.9,0.1);
   vexDelay(100);
   ForwardIntakePD(1650,0.25,0,0.3);
   forwardintakestop();
   TurnLeftPD(93,0.9,0.1);
-  ForwardPD(350,0.3,0,0.1); //2nd goal forward
+  ForwardPD(340,0.3,0,0.1); //2nd goal forward
   insuck(300);
   shoot(400);
-  vexDelay(200);
+  vexDelay(100);
   BackwardPD(400,0.25,0.1);//changed from 600 (1st wall drift)
   forwardintakestop();
   TurnRightPD(65,0.7,0.1);
@@ -572,7 +572,7 @@ void skills3(){
   BackwardOPD(380,0.3,0.1);
   forwardintakestop();
   vexDelay(150);
-  TurnRightPD(110,0.7,0.1); //3rd to 4th angle 
+  TurnRightPD(108,0.7,0.1); //3rd to 4th angle 
   ForwardIntakePD(2090,0.30,0,0.1);//3rd to 4th transition
   forwardintakestop();
   TurnLeftPD(90,0.9,0.1);
@@ -591,9 +591,9 @@ void skills3(){
   insuck(200);
   shoot(600);
   vexDelay(150);
-  BackwardPD(645,0.3,0.1);
+  BackwardPD(650,0.3,0.1);
   vexDelay(200);
-  TurnRightPD(135, 0.8, 0.3);// turn from 5th to 6th
+  TurnRightPD(134, 0.8, 0.3);// turn from 5th to 6th
   ForwardIntakePD(1580, 0.27, 0, 0.1);
   forwardintakestop();
   TurnLeftPD(92,0.9,0.1);
@@ -601,8 +601,8 @@ void skills3(){
   insuck(200);
   shoot(600);
   BackwardPD(355,0.3,0.1);
-  TurnRightPD(62,0.8,0.1);
-  ForwardIntakePD(2150, 0.3, 0, 0.1);
+  TurnRightPD(60,0.8,0.1);
+  ForwardIntakePD(2225, 0.3, 0, 0.1);
   forwardintakestop();
   insuck(400);
   shoot(620);
@@ -617,7 +617,9 @@ void skills3(){
   shoot(620);
   BackwardPD(335, 0.2, 0.1);
   TurnLeftPD(182,0.8,0.1);
-  ForwardIntakePD(1470,0.25,0,0.1);
+  ForwardIntakePD(1000, 0.25, 0, 0.01);
+  TurnLeftPD(10, 0.8, 0.1);
+  ForwardIntakePD(500,0.25,0,0.1);
   forwardintakestop();
   insuck(400);
   shoot(590);
