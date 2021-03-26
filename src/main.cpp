@@ -58,10 +58,13 @@ int Inertail_rotation(){
   //return (fabs(inertial2.rotation()))
 }
 
-int sdsifijhdsf() {
+int controllerScreen() {
+  Controller1.Screen.clearScreen();
   while(true) {
     Controller1.Screen.clearLine();
     Controller1.Screen.print(Inertail_rotation());
+    Controller1.Screen.newLine();
+    Controller1.Screen.print("test");
     
     vexDelay(300);
   }
@@ -207,6 +210,31 @@ void BackwardPD(double goal, float KP, float KD){
   }
   DriveBreak();
 }
+void BackwardOPD(double goal, float KP, float KD){
+  resetEnc();
+  double error = goal - avgEnc();
+  double prevError = 0; 
+  double derivative;
+  double lateralmotorpower;
+
+  while(error > 3) { 
+    error = goal - avgEnc();
+    derivative = error - prevError;
+    lateralmotorpower = (error * KP + derivative * KD);
+    IntakeR.spin(directionType::fwd, 140, vex::velocityUnits::pct);
+    IntakeL.spin(directionType::fwd, 140, vex::velocityUnits::pct);
+    BottomIndexer.spin(directionType::fwd, 60, vex::velocityUnits::pct);
+    LB.spin(reverse,lateralmotorpower,pct);
+    LF.spin(reverse,lateralmotorpower,pct);
+    RB.spin(reverse,lateralmotorpower,pct);
+    RF.spin(reverse,lateralmotorpower,pct);
+
+    prevError = error;
+      task::sleep(10);
+
+  }
+  DriveBreak();
+}
 
 void TurnLeft(double degree, float kP) {
     Inertial_reset();
@@ -254,7 +282,7 @@ void TurnRightPD(double degree, float kP,float kD) {
     double prevError = 0;
     double TurnPower;
 
-    int range = 4;
+    int range = 5;
     while (fabs(error) > range) {
       error = (fabs(Inertail_rotation()- (degree)));
       derivative = error - prevError;
@@ -279,7 +307,7 @@ void TurnLeftPD(double degree, float kP,float kD) {
     double prevError = 0;
     double TurnPower;
 
-    int range = 4;
+    int range = 5;
     while (fabs(error) > range) {
       error = (fabs(Inertail_rotation()- (degree)));
       derivative = error - prevError;
@@ -338,6 +366,11 @@ void forwardintakestop(){
   RB.stop(brake);
   RF.stop(brake);
 }
+void flipout(int time){
+  BottomIndexer.spin(directionType::rev, 140, vex::velocityUnits::pct);
+  task::sleep(time);
+  BottomIndexer.stop(brake);
+}
 void skills1(){ // Left = - Right = +
 //////////1st row ///////////
   ForwardIntakePD(1000,0.25,0,0.1);
@@ -345,7 +378,7 @@ void skills1(){ // Left = - Right = +
   TurnLeftPD(138,0.8,0.1);
   forwardintakestop();
   vexDelay(300);
-  ForwardPD(1130,0.25,0,0.1);
+  ForwardPD(1100,0.25,0,0.1);
   shoot(300); // 1st goal 
   //stopball();
   vexDelay(300);
@@ -361,7 +394,7 @@ void skills1(){ // Left = - Right = +
   shoot(400); // 2nd goal
   //stopball();
   vexDelay(300);
-  BackwardPD(295,0.2,0.1);
+  BackwardPD(275,0.2,0.1);
   //stopshoot();
   TurnRightPD(90, 0.7, 0.1);
   ForwardPD(1700, 0.3, 0, 0.1);
@@ -505,94 +538,90 @@ void skills2(){
   
 }
 void skills3(){
-  ForwardIntakePD(970,0.27,0,0.3);
-  vexDelay(200);
-  TurnLeftPD(135,0.75,0.3);
-  forwardintakestop();
+  ForwardIntakePD(935,0.27,0,0.5);
   vexDelay(150);
-  ForwardPD(1240,0.4,0,0.3);
-  shoot(350);
-  vexDelay(300);
-  BackwardPD(580,0.25,0.1);
-  vexDelay(500);
-  TurnRightPD(141,0.9,0.1);
-  vexDelay(300);
-  ForwardIntakePD(1780,0.25,0,0.3);
+  TurnLeftPD(133,0.75,0.3);
   forwardintakestop();
-  TurnLeftPD(92,0.9,0.1);
-  ForwardPD(300,0.3,0,0.1); //2nd goal forward
-  insuck(200);
-  shoot(300);
+  vexDelay(100);
+  ForwardPD(1150,0.4,0,0.3);
+  insuck(400);
+  shoot(450);
   vexDelay(200);
-  BackwardPD(800,0.25,0.1);
-  TurnRightPD(64,0.7,0.1);
+  BackwardPD(695,0.25,0.1);
+  vexDelay(300);
+  TurnRightPD(144,0.9,0.1);
+  vexDelay(100);
+  ForwardIntakePD(1650,0.25,0,0.3);
+  forwardintakestop();
+  TurnLeftPD(93,0.9,0.1);
+  ForwardPD(350,0.3,0,0.1); //2nd goal forward
+  insuck(300);
+  shoot(400);
   vexDelay(200);
-  ForwardPD(2320,0.27,0,0.1);
+  BackwardPD(400,0.25,0.1);//changed from 600 (1st wall drift)
+  forwardintakestop();
+  TurnRightPD(65,0.7,0.1);
+  vexDelay(200);
+  ForwardIntakePD(2210,0.27,0,0.1);
+  forwardintakestop();
+  vexDelay(100);
   insuck(200);
   shoot(600); // 3rd goal
   vexDelay(150);
   ///////// 2nd row /////////
-  BackwardPD(380,0.3,0.1);
+  BackwardOPD(380,0.3,0.1);
+  forwardintakestop();
   vexDelay(150);
-  TurnRightPD(115,0.7,0.1); //3rd to 4th angle 
-  ForwardIntakePD(2000,0.30,0,0.1);//3rd to 4th transition
+  TurnRightPD(110,0.7,0.1); //3rd to 4th angle 
+  ForwardIntakePD(2090,0.30,0,0.1);//3rd to 4th transition
   forwardintakestop();
   TurnLeftPD(90,0.9,0.1);
-  ForwardPD(390,0.3,0,0.1); //4th goal forward
-  shoot(400);
+  ForwardPD(400,0.3,0,0.1); //4th goal forward
+  insuck(200);
+  shoot(400);// 4th goal shoot
   vexDelay(100);
   BackwardPD(340,0.3,0.1);
   vexDelay(150);
   TurnRightPD(90,0.8,0.1);
   vexDelay(150);
-  ForwardIntakePD(1830,0.3,0,0.1);
+  ForwardIntakePD(1920,0.3,0,0.1);//4th to 5th
   forwardintakestop();
-  TurnLeftPD(45,0.8,0.1);
-  ForwardPD(1100,0.3,0,0.1);
-  shoot(400);
+  TurnLeftPD(46,0.8,0.1);
+  ForwardPD(530,0.3,0,0.1);
+  insuck(200);
+  shoot(600);
   vexDelay(150);
-  BackwardPD(560,0.3,0.1);
+  BackwardPD(645,0.3,0.1);
   vexDelay(200);
-  TurnRightPD(129, 0.8, 0.3);
-  ForwardIntakePD(1790, 0.27, 0, 0.1);
-  TurnLeftPD(92,0.9,0.1);
-  ForwardPD(350,0.3,0,0.1);
-  shoot(400);
-  BackwardPD(335,0.3,0.1);
-  TurnRightPD(60,0.8,0.1);
-  ForwardIntakePD(2100, 0.3, 0, 0.1);
-  shoot(400);
-
- /*///////// 3rd row /////////
-  TurnRightPD(161, 0.8, 0.1);
-  ForwardIntakePD(1900, 0.3, 0, 0.1); 
+  TurnRightPD(135, 0.8, 0.3);// turn from 5th to 6th
+  ForwardIntakePD(1580, 0.27, 0, 0.1);
   forwardintakestop();
-  TurnLeftPD(19,0.8,0.1);
-  ForwardIntakePD(1480, 0.3, 0, 0.1);
-  shoot(400);
-  vexDelay(150);
-  BackwardPD(630, 0.3, 0.1);
-  TurnRightPD(90,0.8,0.1);
-  ForwardPD(1700,0.3,0,0.1);
-  TurnLeftPD(45,0.8,0.1);
-  ForwardPD(500,0.3,0,0.1);
-  shoot(400);
-  vexDelay(150);
-  BackwardPD(500, 0.3, 0.1);
-  TurnRightPD(135,0.8,0.1);
-  ///////// 4th row /////////
-  ForwardIntakePD(1700,0.3,0,0.1);
-  TurnLeftPD(90,0.8,0.1);
-  shoot(400);
-  vexDelay(150);
-  TurnRightPD(180, 0.8, 0.1);
-  ///////// Middle Goal /////////
-  ForwardIntakePD(1500,0.3,0,0.1);
-  ForwardIntakePD(100,0.3,0,0.1);
-  BackwardPD(100,0.3,0.1);
-  ForwardIntakePD(150, 0.3,0, 0.1);
-  shoot(400);
-  BackwardPD(200, 0.3, 0.1);*/
+  TurnLeftPD(92,0.9,0.1);
+  ForwardPD(390,0.3,0,0.1);
+  insuck(200);
+  shoot(600);
+  BackwardPD(355,0.3,0.1);
+  TurnRightPD(62,0.8,0.1);
+  ForwardIntakePD(2150, 0.3, 0, 0.1);
+  forwardintakestop();
+  insuck(400);
+  shoot(620);
+  BackwardOPD(350,0.3,0.1);
+  TurnRightPD(120,0.9,0.1);
+  BackwardPD(340,0.6,0.3);
+  ForwardIntakePD(2280,0.35,0,0.1);
+  forwardintakestop();
+  TurnLeftPD(90,0.9,0.1);
+  ForwardPD(350,0.3,0,0.1);
+  insuck(400);
+  shoot(620);
+  BackwardPD(335, 0.2, 0.1);
+  TurnLeftPD(182,0.8,0.1);
+  ForwardIntakePD(1470,0.25,0,0.1);
+  forwardintakestop();
+  insuck(400);
+  shoot(590);
+  BackwardPD(200, 0.3, 0.1);
 }
 void test(){
   shoot(300);
@@ -603,8 +632,8 @@ void test(){
 
 void autonomous(){ // Forward KP = 0.2 KD = 0.1
 
-
- vexDelay(200);
+ flipout(100);
+ vexDelay(400);
  skills3();
  //test();
 }
@@ -612,7 +641,7 @@ void autonomous(){ // Forward KP = 0.2 KD = 0.1
 void usercontrol(){
 
   bool Donald = false;
-  int deadband = 15;
+  int deadband = 0;
   while (1) {
     Brain.Screen.newLine();
     double drive = 1;
@@ -707,7 +736,7 @@ void usercontrol(){
 }
 
 double drivetrainTemp() {
-  return (leftMotorA.temperature() + leftMotorB.temperature() + rightMotorA.temperature() + rightMotorB.temperature()) / 4;
+  return (LB.temperature() + LF.temperature() + RB.temperature() + RF.temperature()) / 4;
 }
 
 int brainScreen() {
@@ -719,7 +748,7 @@ int brainScreen() {
   Brain.Screen.drawImageFromFile("image.png", 200, 180);
   Brain.Screen.setFont(propXXL);
   Brain.Screen.setPenColor(green);
-  Brain.Screen.print("10012W");
+  Brain.Screen.print("1011A");
   Brain.Screen.setPenColor(white);
 
   for(;;) {
@@ -728,13 +757,12 @@ int brainScreen() {
     // display text in the boxes
     Brain.Screen.printAt(20, 150, "Battery:");
     Brain.Screen.printAt(20, 200, "%d percent", Brain.Battery.capacity());
-    Brain.Screen.printAt(250, 175, "Time: %d ", drivetrainTemp());
+    Brain.Screen.printAt(250, 175, "DriveTemp: %d ", (LB.temperature() + LF.temperature() + RB.temperature() + RF.temperature()) / 4);
     // sleep 1000 msecs
     this_thread::sleep_for(1000);
     // clear the line
     Brain.Screen.clearLine(20, 200);
     Brain.Screen.clearLine(250, 175);
-    // rumble to signal end of match coming
 
   }
   return 0;
@@ -749,8 +777,8 @@ void pre_auton(){
   waitUntil(!inertial1.isCalibrating() && !inertial2.isCalibrating());
   task::sleep(100);
 
-  task aosidjfhosidfh = task(sdsifijhdsf);
-  
+  task ControllerScreen = task(controllerScreen);
+  task bruh = task(brainScreen);
 }
 
 int main() {
