@@ -28,6 +28,8 @@
 //#include "AutonomousFunc.h"
 // ---------- End ------------//
 
+bool Thomas = false;
+
 vex::competition Competition;
 using namespace vex;
 int avgEnc(){
@@ -58,18 +60,12 @@ int Inertail_rotation(){
   //return (fabs(inertial2.rotation()))
 }
 
-int controllerScreen() {
-  Controller1.Screen.clearScreen();
-  while(true) {
-    Controller1.Screen.clearLine();
-    Controller1.Screen.print(Inertail_rotation());
-    Controller1.Screen.newLine();
-    Controller1.Screen.print("test");
-    
-    vexDelay(300);
-  }
+int Inertial1_acceleration() {
+  return inertial1.acceleration(yaxis);
+}
 
-  return 0;
+int Inertial2_acceleration() {
+  return inertial2.acceleration(yaxis);
 }
 
 void AutoFunctions::resetPID() {
@@ -154,7 +150,98 @@ void ForwardIntakePD(double goal, float KP,float KI,float KD){
 
 
 }
-void ForwardPD(double goal, float KP,float KI,float KD){
+
+void ForwardWeirdIntakePD(double goal, float KP,float KI,float KD){
+  
+  resetEnc(); // resets the Enc 
+  //Error// 
+  double error = goal - avgEnc();
+  //Previous Error//
+  double prevError = 0; 
+  //Derivative//
+  double derivative;
+  double totalerror;
+  //lateral motor power//
+  double lateralmotorpower;
+
+  while (error > 3){
+    error = goal - avgEnc();
+    derivative = error - prevError;
+    totalerror += error;
+
+    lateralmotorpower = (error * KP + totalerror * KI + derivative * KD);
+
+    BottomIndexer.spin(directionType::rev, 60, vex::velocityUnits::pct);
+    TopIndexer.spin(directionType::rev, 40, vex::velocityUnits::pct);
+
+    if (error < 800) {
+      IntakeR.spin(directionType::rev, 140, vex::velocityUnits::pct);
+      IntakeL.spin(directionType::rev, 140, vex::velocityUnits::pct);
+    } else {
+      IntakeR.spin(directionType::fwd, 140, vex::velocityUnits::pct);
+      IntakeL.spin(directionType::fwd, 140, vex::velocityUnits::pct);
+    }
+    
+    LB.spin(forward,lateralmotorpower,pct);
+    LF.spin(forward,lateralmotorpower,pct);
+    RB.spin(forward,lateralmotorpower,pct);
+    RF.spin(forward,lateralmotorpower,pct);
+
+    prevError = error;
+      task::sleep(10);
+  }
+  DriveBreak();
+
+
+}
+
+void ForwardWeirdIntakePD2(double goal, float KP,float KI,float KD){
+  
+  resetEnc(); // resets the Enc 
+  //Error// 
+  double error = goal - avgEnc();
+  //Previous Error//
+  double prevError = 0; 
+  //Derivative//
+  double derivative;
+  double totalerror;
+  //lateral motor power//
+  double lateralmotorpower;
+
+  while (error > 3){
+    error = goal - avgEnc();
+    derivative = error - prevError;
+    totalerror += error;
+
+    lateralmotorpower = (error * KP + totalerror * KI + derivative * KD);
+
+    BottomIndexer.spin(directionType::rev, 60, vex::velocityUnits::pct);
+    TopIndexer.spin(directionType::rev, 40, vex::velocityUnits::pct);
+
+    if (error < 2100) {
+      IntakeR.spin(directionType::rev, 140, vex::velocityUnits::pct);
+      IntakeL.spin(directionType::rev, 140, vex::velocityUnits::pct);
+    } else {
+      IntakeR.stop();
+      IntakeL.stop();
+    }
+    
+    LB.spin(forward,lateralmotorpower,pct);
+    LF.spin(forward,lateralmotorpower,pct);
+    RB.spin(forward,lateralmotorpower,pct);
+    RF.spin(forward,lateralmotorpower,pct);
+
+    prevError = error;
+      task::sleep(10);
+  }
+  DriveBreak();
+
+
+}
+
+
+
+void ForwardOutakePD(double goal, float KP,float KI,float KD){
   
   resetEnc(); // resets the Enc 
   //Error// 
@@ -174,7 +261,10 @@ void ForwardPD(double goal, float KP,float KI,float KD){
 
     lateralmotorpower = (error * KP + totalerror * KI + derivative * KD);
     
-    
+    IntakeR.spin(directionType::fwd, 140, vex::velocityUnits::pct);
+    IntakeL.spin(directionType::fwd, 140, vex::velocityUnits::pct);
+  
+    TopIndexer.spin(directionType::rev, 40, vex::velocityUnits::pct);
     LB.spin(forward,lateralmotorpower,pct);
     LF.spin(forward,lateralmotorpower,pct);
     RB.spin(forward,lateralmotorpower,pct);
@@ -187,6 +277,48 @@ void ForwardPD(double goal, float KP,float KI,float KD){
 
 
 }
+void ForwardPD(double goal, float KP,float KI,float KD){
+  
+  resetEnc(); // resets the Enc 
+  //Error// 
+  double error = goal - avgEnc();
+  //Previous Error//
+  double prevError = 0; 
+  //Derivative//
+  double derivative;
+  double totalerror;
+  //lateral motor power//
+  double lateralmotorpower;
+
+  while (error > 3){
+    if (Inertial1_acceleration() < 0 || Inertial2_acceleration() < 0) {
+      vexDelay(50);
+      resetEnc();
+      error = 0;
+      prevError = 0;
+      derivative = 0;
+      totalerror = 0;
+      lateralmotorpower = 0;
+    } else {
+          error = goal - avgEnc();
+    derivative = error - prevError;
+    totalerror += error;
+
+    lateralmotorpower = (error * KP + totalerror * KI + derivative * KD);
+    
+    
+    LB.spin(forward,lateralmotorpower,pct);
+    LF.spin(forward,lateralmotorpower,pct);
+    RB.spin(forward,lateralmotorpower,pct);
+    RF.spin(forward,lateralmotorpower,pct);
+
+    prevError = error;
+      task::sleep(10);
+    }
+  }
+  DriveBreak();
+}
+
 void BackwardPD(double goal, float KP, float KD){
   resetEnc();
   double error = goal - avgEnc();
@@ -195,21 +327,30 @@ void BackwardPD(double goal, float KP, float KD){
   double lateralmotorpower;
 
   while(error > 3) { 
-    error = goal - avgEnc();
-    derivative = error - prevError;
-    lateralmotorpower = (error * KP + derivative * KD);
+    if (Inertial1_acceleration() < 0 || Inertial2_acceleration() < 0) {
+      vexDelay(150);
+      error = 0;
+      prevError = 0;
+      derivative = 0;
+      lateralmotorpower = 0;
+    } else {
+      error = goal - avgEnc();
+      derivative = error - prevError;
+      lateralmotorpower = (error * KP + derivative * KD);
     
-    LB.spin(reverse,lateralmotorpower,pct);
-    LF.spin(reverse,lateralmotorpower,pct);
-    RB.spin(reverse,lateralmotorpower,pct);
-    RF.spin(reverse,lateralmotorpower,pct);
+      LB.spin(reverse,lateralmotorpower,pct);
+      LF.spin(reverse,lateralmotorpower,pct);
+      RB.spin(reverse,lateralmotorpower,pct);
+      RF.spin(reverse,lateralmotorpower,pct);
 
-    prevError = error;
+      prevError = error;
       task::sleep(10);
 
+    }
   }
   DriveBreak();
 }
+
 void BackwardOPD(double goal, float KP, float KD){
   resetEnc();
   double error = goal - avgEnc();
@@ -371,6 +512,15 @@ void flipout(int time){
   task::sleep(time);
   BottomIndexer.stop(brake);
 }
+void descore(int time){
+    IntakeR.spin(directionType::rev, 140, vex::velocityUnits::pct);
+    IntakeL.spin(directionType::rev, 140, vex::velocityUnits::pct);
+    BottomIndexer.spin(directionType::rev, 60, vex::velocityUnits::pct);
+    task::sleep(time);
+    IntakeR.stop();
+    IntakeL.stop();
+    BottomIndexer.stop();
+}
 void skills1(){ // Left = - Right = +
 //////////1st row ///////////
   ForwardIntakePD(1000,0.25,0,0.1);
@@ -467,7 +617,7 @@ void skills2(){
   TurnLeftPD(138,0.6,0.1);
   forwardintakestop();
   vexDelay(200);
-  ForwardPD(1180,0.4,0,0.1);
+  ForwardPD(1150,0.4,0,0.1);
   shoot(350);
   vexDelay(150);
   BackwardPD(550,0.25,0.1);
@@ -547,14 +697,14 @@ void skills3(){
   insuck(400);
   shoot(450);
   vexDelay(100);
-  BackwardPD(695,0.25,0.1);
+  BackwardPD(720,0.25,0.1);
   vexDelay(100);
   TurnRightPD(144,0.9,0.1);
   vexDelay(100);
-  ForwardIntakePD(1650,0.25,0,0.3);
+  ForwardIntakePD(1690,0.25,0,0.3); //was 1650
   forwardintakestop();
   TurnLeftPD(93,0.9,0.1);
-  ForwardPD(340,0.3,0,0.1); //2nd goal forward
+  ForwardPD(295,0.3,0,0.1); //2nd goal forward (was 320)
   insuck(300);
   shoot(400);
   vexDelay(100);
@@ -570,6 +720,7 @@ void skills3(){
   vexDelay(150);
   ///////// 2nd row /////////
   BackwardOPD(380,0.3,0.1);
+  vexDelay(100);
   forwardintakestop();
   vexDelay(150);
   TurnRightPD(108,0.7,0.1); //3rd to 4th angle 
@@ -582,45 +733,52 @@ void skills3(){
   vexDelay(100);
   BackwardPD(340,0.3,0.1);
   vexDelay(150);
-  TurnRightPD(90,0.8,0.1);
+  TurnRightPD(93,0.8,0.1);
   vexDelay(150);
   ForwardIntakePD(1920,0.3,0,0.1);//4th to 5th
   forwardintakestop();
   TurnLeftPD(46,0.8,0.1);
-  ForwardPD(530,0.3,0,0.1);
+  ForwardPD(450,0.3,0,0.1); //was 590
   insuck(200);
   shoot(600);
-  vexDelay(150);
-  BackwardPD(650,0.3,0.1);
+  BackwardPD(680,0.3,0.1);//changed from 650
   vexDelay(200);
-  TurnRightPD(134, 0.8, 0.3);// turn from 5th to 6th
-  ForwardIntakePD(1580, 0.27, 0, 0.1);
+  TurnRightPD(136, 0.8, 0.3);// turn from 5th to 6th
+  ForwardIntakePD(1620, 0.27, 0, 0.1);//1580
   forwardintakestop();
   TurnLeftPD(92,0.9,0.1);
-  ForwardPD(390,0.3,0,0.1);
+  ForwardPD(300,0.3,0,0.1); // was 390
   insuck(200);
   shoot(600);
   BackwardPD(355,0.3,0.1);
-  TurnRightPD(60,0.8,0.1);
-  ForwardIntakePD(2225, 0.3, 0, 0.1);
+  TurnRightPD(64,0.8,0.1);
+  ForwardWeirdIntakePD2(2225, 0.3, 0, 0.1);
   forwardintakestop();
   insuck(400);
-  shoot(620);
+  shoot(540);
   BackwardOPD(350,0.3,0.1);
   TurnRightPD(120,0.9,0.1);
   BackwardPD(340,0.6,0.3);
   ForwardIntakePD(2280,0.35,0,0.1);
   forwardintakestop();
   TurnLeftPD(90,0.9,0.1);
-  ForwardPD(350,0.3,0,0.1);
+  ForwardPD(300,0.3,0,0.1);
   insuck(400);
-  shoot(620);
-  BackwardPD(335, 0.2, 0.1);
-  TurnLeftPD(182,0.8,0.1);
-  ForwardIntakePD(1000, 0.25, 0, 0.01);
-  TurnLeftPD(10, 0.8, 0.1);
-  ForwardIntakePD(500,0.25,0,0.1);
+  shoot(720);
   forwardintakestop();
+  descore(1000);
+  BackwardOPD(335, 0.2, 0.1);
+  IntakeL.stop();
+  IntakeR.stop();
+  TopIndexer.stop();
+  BottomIndexer.stop();
+  TurnLeftPD(175,0.8,0.1); //changed from 182
+  ForwardWeirdIntakePD(1530, 0.35, 0, 0.01);// changed from 0.25
+  
+  
+  //TurnLeftPD(10, 0.8, 0.1);
+ // ForwardIntakePD(500,0.25,0,0.1);
+ // forwardintakestop();
   insuck(400);
   shoot(590);
   BackwardPD(200, 0.3, 0.1);
@@ -636,6 +794,7 @@ void autonomous(){ // Forward KP = 0.2 KD = 0.1
 
  flipout(100);
  vexDelay(400);
+ 
  skills3();
  //test();
 }
@@ -737,6 +896,112 @@ void usercontrol(){
   }
 }
 
+void usercontrol2(){
+
+  bool Donald = false;
+  int deadband = 0;
+  while (1) {
+    Brain.Screen.newLine();
+    double drive = 1;
+    /*int Ch1 = Controller1.Axis1.value();
+    int Ch3 = Controller1.Axis3.value();
+    int Ch4 = Controller1.Axis4.value();
+    Brain.Screen.print(Ch4);
+    LeftMotorF.spin(directionType::fwd, Ch3 - Ch1 - Ch4,velocityUnits::pct);
+    LeftMotorB.spin(directionType::fwd, Ch3 + Ch1 - Ch4,velocityUnits::pct);
+    RightMotorF.spin(directionType::fwd, Ch3 + Ch1 + Ch4,velocityUnits::pct);
+    RightMotorB.spin(directionType::fwd, Ch3 - Ch1 + Ch4,velocityUnits::pct);*/
+    //Get the velocity percentage of the left motor. (Axis3 + Axis1)
+    int leftMotorSpeed =
+        Controller1.Axis3.position() + Controller1.Axis1.position() * drive;
+    // Get the velocity percentage of the right motor. (Axis3 - Axis1)
+    int rightMotorSpeed =
+        Controller1.Axis3.position() - Controller1.Axis1.position()* drive;
+    // Set the speed of the left motor. If the value is less than the deadband,
+    // set it to zero.
+    if (Controller1.ButtonUp.pressing()){
+      drive = 1.0;
+    
+    }
+    if (Controller1.ButtonDown.pressing()){
+      drive = 0.5;
+    }
+    if (Controller1.ButtonL1.pressing()) {
+      Donald = true;
+    }
+    if (Controller1.ButtonUp.pressing()) {
+      Donald = false;
+    }
+      if (abs(leftMotorSpeed) < deadband) {
+      // Set the speed to zero.
+      LF.setVelocity(0, percent);
+      LB.setVelocity(0, percent);
+    } else {
+      // Set the speed to leftMotorSpeed
+      LF.setVelocity(leftMotorSpeed, percent);
+      LB.setVelocity(leftMotorSpeed, percent);
+    }
+    // Set the speed of the right motor. If the value is less than the deadband,
+    // set it to zero.
+    if (abs(rightMotorSpeed) < deadband) {
+      // Set the speed to zero
+      RF.setVelocity(0, percent);
+      RB.setVelocity(0, percent);
+    } else {
+      // Set the speed to rightMotorSpeed
+      RF.setVelocity(rightMotorSpeed, percent);
+      RB.setVelocity(rightMotorSpeed, percent);
+    }
+    // Spin both motors in the forward direction.
+    LF.spin(forward);
+    LB.spin(forward);
+    RF.spin(forward);
+    RB.spin(forward);
+    wait(25, msec);
+    // Tank Drive Code
+    if (Donald == true) {
+      IntakeR.spin(directionType::rev, 140, vex::velocityUnits::pct);
+      IntakeL.spin(directionType::rev, 140, vex::velocityUnits::pct);
+      BottomIndexer.spin(directionType::rev, 140, vex::velocityUnits::pct);
+    } else if (Donald == false) {
+      IntakeR.stop();
+      IntakeL.stop();
+      BottomIndexer.stop();
+    }
+    if (Controller1.ButtonR1.pressing()) {
+/*      TopIndexer.spin(directionType::rev, 140, vex::velocityUnits::pct);
+      BottomIndexer.spin(directionType::fwd, 140, vex::velocityUnits::pct);
+      IntakeR.spin(directionType::fwd, 127, vex::velocityUnits::pct);
+      IntakeL.spin(directionType::fwd, 127, vex::velocityUnits::pct);*/
+      IntakeL.spin(reverse, 140, percent);
+      IntakeR.spin(reverse, 140, percent);
+    } else if (Controller1.ButtonR2.pressing()) {
+/*       TopIndexer.spin(directionType::fwd, 140, vex::velocityUnits::pct);
+      BottomIndexer.spin(directionType::rev, 140, vex::velocityUnits::pct);*/
+      IntakeL.spin(forward, 140, percent);
+      IntakeR.spin(forward, 140, percent);
+    } else if (Controller1.ButtonL2.pressing()) {
+/*      IntakeL.spin(directionType::rev, 127, vex::velocityUnits::pct);
+      IntakeR.spin(directionType::rev, 127, vex::velocityUnits::pct);
+      BottomIndexer.spin(directionType::rev, 140, vex::velocityUnits::pct); */
+            TopIndexer.spin(reverse, 140, percent);
+      BottomIndexer.spin(reverse, 140, percent);
+    } else if (Controller1.ButtonL1.pressing()) {
+/*      IntakeR.spin(directionType::fwd, 140, vex::velocityUnits::pct);
+      IntakeL.spin(directionType::fwd, 140, vex::velocityUnits::pct);
+      BottomIndexer.spin(directionType::fwd, 140, vex::velocityUnits::pct);*/
+            TopIndexer.spin(forward, 140, percent);
+      BottomIndexer.spin(forward, 140, percent);
+    } else {
+      TopIndexer.stop();
+      BottomIndexer.stop();
+      IntakeL.stop();
+      IntakeR.stop();
+    }
+  }
+}
+
+
 double drivetrainTemp() {
   return (LB.temperature() + LF.temperature() + RB.temperature() + RF.temperature()) / 4;
 }
@@ -779,14 +1044,18 @@ void pre_auton(){
   waitUntil(!inertial1.isCalibrating() && !inertial2.isCalibrating());
   task::sleep(100);
 
-  task ControllerScreen = task(controllerScreen);
-  task bruh = task(brainScreen);
+  task BrainScreen = task(brainScreen);
 }
 
 int main() {
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
-  Competition.drivercontrol(usercontrol);
+  if (Thomas) {
+    Competition.drivercontrol(usercontrol);
+  } else {
+    Competition.drivercontrol(usercontrol2);
+  }
+
   // Run the pre-autonomous function.
   pre_auton();
   // Prevent main from exiting with an infinite loop.
