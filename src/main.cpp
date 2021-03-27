@@ -13,7 +13,7 @@
 */
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
-//Importing Public Libraries//a
+//Importing Public Libraries//
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -127,24 +127,74 @@ void ForwardIntakePD(double goal, float KP,float KI,float KD){
   //lateral motor power//
   double lateralmotorpower;
 
-  while (error > 3){
-    error = goal - avgEnc();
-    derivative = error - prevError;
-    totalerror += error;
+  while (error > 3) {
+      error = goal - avgEnc();
+      derivative = error - prevError;
+      totalerror += error;
 
-    lateralmotorpower = (error * KP + totalerror * KI + derivative * KD);
+      lateralmotorpower = (error * KP + totalerror * KI + derivative * KD);
     
-    IntakeR.spin(directionType::rev, 140, vex::velocityUnits::pct);
-    IntakeL.spin(directionType::rev, 140, vex::velocityUnits::pct);
-    BottomIndexer.spin(directionType::rev, 60, vex::velocityUnits::pct);
-    TopIndexer.spin(directionType::rev, 40, vex::velocityUnits::pct);
-    LB.spin(forward,lateralmotorpower,pct);
-    LF.spin(forward,lateralmotorpower,pct);
-    RB.spin(forward,lateralmotorpower,pct);
-    RF.spin(forward,lateralmotorpower,pct);
+      IntakeR.spin(directionType::rev, 140, vex::velocityUnits::pct);
+      IntakeL.spin(directionType::rev, 140, vex::velocityUnits::pct);
+      BottomIndexer.spin(directionType::rev, 60, vex::velocityUnits::pct);
+      TopIndexer.spin(directionType::rev, 40, vex::velocityUnits::pct);
+      LB.spin(forward,lateralmotorpower,pct);
+      LF.spin(forward,lateralmotorpower,pct);
+      RB.spin(forward,lateralmotorpower,pct);
+      RF.spin(forward,lateralmotorpower,pct);
 
-    prevError = error;
+      prevError = error;
       task::sleep(10);
+    }
+
+  DriveBreak();
+}
+
+void DriftPD(double goal, float KP,float KI,float KD){
+  
+  resetEnc(); // resets the Enc 
+  //Error// 
+  double error = goal - avgEnc();
+  //Previous Error//
+  double prevError = 0; 
+  //Derivative//
+  double derivative;
+  double totalerror;
+  //lateral motor power//
+  double lateralmotorpower;
+
+  int hitCount = 0;
+
+  while (error > 3){
+    if (Inertial1_acceleration() < 0 || Inertial2_acceleration() < 0) {
+      hitCount++;
+      if(hitCount == 2) {
+        error = 0;
+        prevError = 0;
+        derivative = 0;
+        totalerror = 0;
+        lateralmotorpower = 0;
+        hitCount = 0;
+      }
+    } else {
+      error = goal - avgEnc();
+      derivative = error - prevError;
+      totalerror += error;
+
+      lateralmotorpower = (error * KP + totalerror * KI + derivative * KD);
+    
+      IntakeR.spin(directionType::rev, 140, vex::velocityUnits::pct);
+      IntakeL.spin(directionType::rev, 140, vex::velocityUnits::pct);
+      BottomIndexer.spin(directionType::rev, 60, vex::velocityUnits::pct);
+      TopIndexer.spin(directionType::rev, 40, vex::velocityUnits::pct);
+      LB.spin(forward,lateralmotorpower,pct);
+      LF.spin(forward,lateralmotorpower,pct);
+      RB.spin(forward,lateralmotorpower,pct);
+      RF.spin(forward,lateralmotorpower,pct);
+
+      prevError = error;
+      task::sleep(10);
+    }
   }
   DriveBreak();
 
@@ -255,7 +305,17 @@ void ForwardOutakePD(double goal, float KP,float KI,float KD){
   double lateralmotorpower;
 
   while (error > 3){
-    error = goal - avgEnc();
+    if (Inertial1_acceleration() < 0 || Inertial2_acceleration() < 0) {
+      vexDelay(50);
+      resetEnc();
+      error = 0;
+      goal = 0;
+      prevError = 0;
+      derivative = 0;
+      totalerror = 0;
+
+    } else {
+          error = goal - avgEnc();
     derivative = error - prevError;
     totalerror += error;
 
@@ -272,10 +332,9 @@ void ForwardOutakePD(double goal, float KP,float KI,float KD){
 
     prevError = error;
       task::sleep(10);
+    }
   }
   DriveBreak();
-
-
 }
 void ForwardPD(double goal, float KP,float KI,float KD){
   
@@ -295,24 +354,27 @@ void ForwardPD(double goal, float KP,float KI,float KD){
       vexDelay(50);
       resetEnc();
       error = 0;
+      lateralmotorpower = 0;
       prevError = 0;
       derivative = 0;
       totalerror = 0;
       lateralmotorpower = 0;
+
+      task::sleep(10);
+
     } else {
-          error = goal - avgEnc();
-    derivative = error - prevError;
-    totalerror += error;
+      error = goal - avgEnc();
+      derivative = error - prevError;
+      totalerror += error;
+      
+      lateralmotorpower = (error * KP + totalerror * KI + derivative * KD);
 
-    lateralmotorpower = (error * KP + totalerror * KI + derivative * KD);
-    
-    
-    LB.spin(forward,lateralmotorpower,pct);
-    LF.spin(forward,lateralmotorpower,pct);
-    RB.spin(forward,lateralmotorpower,pct);
-    RF.spin(forward,lateralmotorpower,pct);
+      LB.spin(forward,lateralmotorpower,pct);
+      LF.spin(forward,lateralmotorpower,pct);
+      RB.spin(forward,lateralmotorpower,pct);
+      RF.spin(forward,lateralmotorpower,pct);
 
-    prevError = error;
+      prevError = error;
       task::sleep(10);
     }
   }
@@ -327,13 +389,6 @@ void BackwardPD(double goal, float KP, float KD){
   double lateralmotorpower;
 
   while(error > 3) { 
-    if (Inertial1_acceleration() < 0 || Inertial2_acceleration() < 0) {
-      vexDelay(150);
-      error = 0;
-      prevError = 0;
-      derivative = 0;
-      lateralmotorpower = 0;
-    } else {
       error = goal - avgEnc();
       derivative = error - prevError;
       lateralmotorpower = (error * KP + derivative * KD);
@@ -346,7 +401,43 @@ void BackwardPD(double goal, float KP, float KD){
       prevError = error;
       task::sleep(10);
 
+
+  }
+  DriveBreak();
+}
+
+void BackwardAlignPD(double goal, float KP, float KD){
+  resetEnc();
+  double error = goal - avgEnc();
+  double prevError = 0; 
+  double derivative;
+  double lateralmotorpower;
+
+  while(error > 3) { 
+    if (Inertial1_acceleration() > 0 || Inertial2_acceleration() > 0) {
+      vexDelay(150);
+      resetEnc();
+      error = 0;
+      lateralmotorpower = 0;
+      goal = 0;
+      prevError = 0;
+      derivative = 0;
+      
+      task::sleep(10);
     }
+      error = goal - avgEnc();
+      derivative = error - prevError;
+      lateralmotorpower = (error * KP + derivative * KD);
+    
+      LB.spin(reverse,lateralmotorpower,pct);
+      LF.spin(reverse,lateralmotorpower,pct);
+      RB.spin(reverse,lateralmotorpower,pct);
+      RF.spin(reverse,lateralmotorpower,pct);
+
+      prevError = error;
+      task::sleep(10);
+
+
   }
   DriveBreak();
 }
@@ -697,14 +788,14 @@ void skills3(){
   insuck(400);
   shoot(450);
   vexDelay(100);
-  BackwardPD(720,0.25,0.1);
+  BackwardPD(730,0.25,0.1);
   vexDelay(100);
-  TurnRightPD(144,0.9,0.1);
+  TurnRightPD(140,0.9,0.1);
   vexDelay(100);
   ForwardIntakePD(1690,0.25,0,0.3); //was 1650
   forwardintakestop();
   TurnLeftPD(93,0.9,0.1);
-  ForwardPD(295,0.3,0,0.1); //2nd goal forward (was 320)
+  ForwardPD(2000,0.3,0,0.1); //2nd goal forward (2000 to gauruntee touching)
   insuck(300);
   shoot(400);
   vexDelay(100);
@@ -722,43 +813,45 @@ void skills3(){
   BackwardOPD(380,0.3,0.1);
   vexDelay(100);
   forwardintakestop();
-  vexDelay(150);
+  vexDelay(250);
+  shoot(300);
+  vexDelay(100);
   TurnRightPD(108,0.7,0.1); //3rd to 4th angle 
-  ForwardIntakePD(2090,0.30,0,0.1);//3rd to 4th transition
+  ForwardIntakePD(2070,0.30,0,0.1);//3rd to 4th transition
   forwardintakestop();
   TurnLeftPD(90,0.9,0.1);
-  ForwardPD(400,0.3,0,0.1); //4th goal forward
+  ForwardPD(2000,0.3,0,0.1); //4th goal forward
   insuck(200);
   shoot(400);// 4th goal shoot
   vexDelay(100);
   BackwardPD(340,0.3,0.1);
+  vexDelay(400);
+  TurnRightPD(91,0.8,0.1); // change from 93 to 92
   vexDelay(150);
-  TurnRightPD(93,0.8,0.1);
-  vexDelay(150);
-  ForwardIntakePD(1920,0.3,0,0.1);//4th to 5th
+  ForwardIntakePD(1870,0.3,0,0.1);//4th to 5th
   forwardintakestop();
   TurnLeftPD(46,0.8,0.1);
-  ForwardPD(450,0.3,0,0.1); //was 590
+  ForwardPD(2000,0.3,0,0.1); //was 590
   insuck(200);
   shoot(600);
-  BackwardPD(680,0.3,0.1);//changed from 650
+  BackwardPD(710,0.3,0.1);//changed from 650
   vexDelay(200);
-  TurnRightPD(136, 0.8, 0.3);// turn from 5th to 6th
+  TurnRightPD(141, 0.8, 0.3);// turn from 5th to 6th
   ForwardIntakePD(1620, 0.27, 0, 0.1);//1580
   forwardintakestop();
   TurnLeftPD(92,0.9,0.1);
-  ForwardPD(300,0.3,0,0.1); // was 390
+  ForwardPD(2000,0.3,0,0.1); // was 390
   insuck(200);
   shoot(600);
   BackwardPD(355,0.3,0.1);
   TurnRightPD(64,0.8,0.1);
-  ForwardWeirdIntakePD2(2225, 0.3, 0, 0.1);
+  ForwardIntakePD(2225, 0.3, 0, 0.1);
   forwardintakestop();
   insuck(400);
   shoot(540);
   BackwardOPD(350,0.3,0.1);
   TurnRightPD(120,0.9,0.1);
-  BackwardPD(340,0.6,0.3);
+  BackwardAlignPD(350,0.6,0.3);
   ForwardIntakePD(2280,0.35,0,0.1);
   forwardintakestop();
   TurnLeftPD(90,0.9,0.1);
@@ -771,15 +864,22 @@ void skills3(){
   IntakeL.stop();
   IntakeR.stop();
   TopIndexer.stop();
-  BottomIndexer.stop();
-  TurnLeftPD(175,0.8,0.1); //changed from 182
-  ForwardWeirdIntakePD(1530, 0.35, 0, 0.01);// changed from 0.25
+  BottomIndexer.stop(); 
+  TurnLeftPD(180,0.8,0.1); //changed from 182
+  ForwardIntakePD(1000, 0.35, 0, 0.01);
   
   
-  //TurnLeftPD(10, 0.8, 0.1);
- // ForwardIntakePD(500,0.25,0,0.1);
- // forwardintakestop();
-  insuck(400);
+  TurnLeftPD(10, 0.8, 0.1);
+  ForwardOutakePD(500,0.25,0,0.1);
+  LF.spin(forward, 10000000, rpm);
+  LB.spin(forward, 10000000, rpm);
+  RB.stop(brake);
+  RF.stop(brake);
+  vexDelay(300);
+  LF.stop(coast);
+  LB.stop(coast);
+  RF.stop(coast);
+  RB.stop(coast);
   shoot(590);
   BackwardPD(200, 0.3, 0.1);
 }
