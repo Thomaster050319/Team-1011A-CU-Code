@@ -25,6 +25,7 @@
 #include "v5_vcs.h"
 #include "robot-config.h"
 #include "AutoFunctions.h"
+#include "VisionSensorConfig.h"
 //#include "AutonomousFunc.h"
 // ---------- End ------------//
 
