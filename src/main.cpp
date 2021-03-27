@@ -28,7 +28,7 @@
 //#include "AutonomousFunc.h"
 // ---------- End ------------//
 
-bool Thomas = false;
+bool Thomas = true;
 
 vex::competition Competition;
 using namespace vex;
@@ -817,16 +817,16 @@ void skills3(){
   shoot(300);
   vexDelay(100);
   TurnRightPD(108,0.7,0.1); //3rd to 4th angle 
-  ForwardIntakePD(2070,0.30,0,0.1);//3rd to 4th transition
+  ForwardIntakePD(2120,0.30,0,0.1);//3rd to 4th transition
   forwardintakestop();
-  TurnLeftPD(90,0.9,0.1);
+  TurnLeftPD(85,0.9,0.1);
   ForwardPD(2000,0.3,0,0.1); //4th goal forward
   insuck(200);
-  shoot(400);// 4th goal shoot
+  shoot(500);// 4th goal shoot
   vexDelay(100);
   BackwardPD(340,0.3,0.1);
   vexDelay(400);
-  TurnRightPD(91,0.8,0.1); // change from 93 to 92
+  TurnRightPD(92,0.8,0.1); // change from 93 to 92
   vexDelay(150);
   ForwardIntakePD(1870,0.3,0,0.1);//4th to 5th
   forwardintakestop();
