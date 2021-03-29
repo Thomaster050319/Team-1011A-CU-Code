@@ -11,6 +11,7 @@
 #include "vex.h"
 #include "robot-config.h"
 #include "AutoFunctions.h"
+#include "vision.h"
 //#include "AutonomousFunc.h"
 // ---------- End ------------//
 
@@ -31,7 +32,7 @@ int avgEnc(){
 }
 
 bool hitDetected() {
-  if(inertial1.acceleration(yaxis) < 0 || inertial2.acceleration(yaxis) < 0 || accel1.acceleration() < 0 || bumperLeft.pressing() || bumperRight.pressing()) {
+  if(inertial1.acceleration(yaxis) < 0 || inertial2.acceleration(yaxis) < 0 || accel1.acceleration() < 0 || LF.current()*2 < LB.current() || RF.current()*2 < RB.current()) {
     return true;
   } else {
     return false;
@@ -64,6 +65,39 @@ void Inertial_reset(){
 int Inertail_rotation(){
   return(fabs(inertial1.rotation() + inertial2.rotation()));
   //return (fabs(inertial2.rotation()))
+}
+
+// 158 x is center of screen
+
+void visionAlign(vex::vision::signature objSig, double vKP, double vKD) {
+  double vError = 69420;
+  double vDerivative = 0;
+  double vPrevError = 0;
+  double vMotorPower = 0;
+
+  while (vError != 0) {
+    Vision1.takeSnapshot(objSig);
+    vError = 158 - Vision1.largestObject.centerX;
+    vDerivative = vError - vPrevError;
+    vMotorPower = vError * vKP + vDerivative * vKD;
+
+    if (vError > 0) { // if the target is too much to the left, turn left
+      LF.spin(forward, vMotorPower, velocityUnits::pct);
+      LB.spin(forward, vMotorPower, velocityUnits::pct);
+      RF.spin(reverse, vMotorPower, velocityUnits::pct);
+      RB.spin(reverse, vMotorPower, velocityUnits::pct);
+
+    } else { // if the target is too much too much to the right, turn right
+      LF.spin(reverse, vMotorPower, velocityUnits::pct);
+      LB.spin(reverse, vMotorPower, velocityUnits::pct);
+      RF.spin(forward, vMotorPower, velocityUnits::pct);
+      RB.spin(forward, vMotorPower, velocityUnits::pct);
+    }
+
+    vPrevError = vError;
+
+    task::sleep(50);
+  }
 }
 
 // PD loop to go forward while intaking
@@ -799,38 +833,38 @@ void skills3(){
 // skills function 4.0
 void skills4(){
   // --- First Goal --- //
-  ForwardIntakePD(935,0.27,0,0.5);
+  accurateForwardIntakePD(935,0.27,0,0.5);
   vexDelay(150);
   TurnLeftPD(133,0.75,0.3);
   forwardintakestop();
   vexDelay(100);
-  ForwardPD(1150,0.4,0,0.3);
+  accurateForwardPD(1150,0.4,0,0.3);
   insuck(400);
   shoot(450);
   vexDelay(100);
-  BackwardPD(730,0.25,0.1);
+  accurateBackwardPD(730,0.25,0.1);
   vexDelay(100);
   TurnRightPD(141.3,0.9,0.1); //was 141
   visionAlign(RED_BALL, 0.9, 0.1); // aligns with the red ball
-  ForwardIntakePD(1690,0.25,0,0.3); //was 1650
+  accurateForwardIntakePD(1690,0.25,0,0.3); //was 1650
   forwardintakestop();
   TurnLeftPD(93,0.9,0.1);
-  ForwardPD(2000,0.3,0,0.1); //2nd goal forward (2000 to gauruntee touching)
+  accurateForwardPD(2000,0.3,0,0.1); //2nd goal forward (2000 to gauruntee touching)
   insuck(300);
   shoot(400);
   vexDelay(100);
-  BackwardPD(400,0.25,0.1);//changed from 600 (1st wall drift)
+  accurateBackwardPD(400,0.25,0.1);//changed from 600 (1st wall drift)
   forwardintakestop();
   TurnRightPD(65,0.7,0.1);
   visionAlign(RED_BALL, 0.9, 0.1); // align with red ball
-  ForwardIntakePD(2210,0.27,0,0.1);
+  accurateForwardIntakePD(2210,0.27,0,0.1);
   forwardintakestop();
   vexDelay(100);
   insuck(200);
   shoot(600); // 3rd goal
   vexDelay(150);
   ///////// 2nd row /////////
-  BackwardOPD(380,0.3,0.1);
+  accurateBackwardOPD(380,0.3,0.1);
   vexDelay(100);
   forwardintakestop();
   vexDelay(250);
@@ -838,63 +872,63 @@ void skills4(){
   vexDelay(100);
   TurnRightPD(106,0.7,0.1); //3rd to 4th angle 
   visionAlign(RED_BALL, 0.9, 0.1); // align with ball
-  ForwardIntakePD(2100,0.30,0,0.1);//3rd to 4th transition
+  accurateForwardIntakePD(2100,0.30,0,0.1);//3rd to 4th transition
   forwardintakestop();
   TurnLeftPD(85,0.9,0.1);
-  ForwardPD(1000,0.3,0,0.1); //4th goal forward
+  accurateForwardPD(1000,0.3,0,0.1); //4th goal forward
   insuck(200);
   shoot(500);// 4th goal shoot
   vexDelay(100);
-  BackwardPD(370,0.3,0.1); //340
+  accurateBackwardPD(370,0.3,0.1); //340
   vexDelay(400);
   TurnRightPD(93,0.8,0.1); // change from 93 to 92 to 94.5
   visionAlign(RED_BALL, 0.9, 0.1); // aligns with red ball
-  ForwardIntakePD(1850,0.3,0,0.1);//4th to 5th
+  accurateForwardIntakePD(1850,0.3,0,0.1);//4th to 5th
   forwardintakestop();
   TurnLeftPD(46,0.8,0.1);
-  ForwardPD(800,0.3,0,0.1); //was 590
+  accurateForwardPD(800,0.3,0,0.1); //was 590
   insuck(200);
   shoot(600);
-  BackwardPD(690,0.3,0.1);//changed from 650
+  accurateBackwardPD(690,0.3,0.1);//changed from 650
   vexDelay(200);
   TurnRightPD(137, 0.8, 0.3);// turn from 5th to 6th
   visionAlign(RED_BALL, 0.9, 0.1);
-  ForwardIntakePD(1610, 0.27, 0, 0.1);//1580
+  accurateForwardIntakePD(1610, 0.27, 0, 0.1);//1580
   forwardintakestop();
   TurnLeftPD(92,0.9,0.1);
-  ForwardPD(2000,0.3,0,0.1); // was 390
+  accurateForwardPD(2000,0.3,0,0.1); // was 390
   insuck(200);
   shoot(600);
-  BackwardPD(355,0.3,0.1);
+  accurateBackwardPD(355,0.3,0.1);
   TurnRightPD(64,0.8,0.1);
   visionAlign(RED_BALL, 0.9, 0.1);
-  ForwardIntakePD(2225, 0.3, 0, 0.1);
+  accurateForwardIntakePD(2225, 0.3, 0, 0.1);
   forwardintakestop();
   insuck(400);
   shoot(540);
-  BackwardOPD(350,0.3,0.1);
+  accurateBackwardOPD(350,0.3,0.1);
   TurnRightPD(120,0.9,0.1);
-  BackwardAlignPD(350,0.6,0.3);
-  ForwardIntakePD(2280,0.35,0,0.1);
+  accurateBackwardAlignPD(350,0.6,0.3);
+  accurateForwardIntakePD(2280,0.35,0,0.1);
   forwardintakestop();
   TurnLeftPD(90,0.9,0.1);
-  ForwardPD(300,0.3,0,0.1);
+  accurateForwardPD(300,0.3,0,0.1);
   insuck(400);
   shoot(720);
   forwardintakestop();
   descore(1000);
-  BackwardOPD(335, 0.2, 0.1);
+  accurateBackwardOPD(335, 0.2, 0.1);
   IntakeL.stop();
   IntakeR.stop();
   TopIndexer.stop();
   BottomIndexer.stop(); 
   TurnLeftPD(180,0.8,0.1); //changed from 182
   visionAlign(RED_BALL, 0.9, 0.1); // align with red ball
-  ForwardIntakePD(1000, 0.35, 0, 0.01);
+  accurateForwardIntakePD(1000, 0.35, 0, 0.01);
   
   
   TurnLeftPD(10, 0.8, 0.1);
-  ForwardOutakePD(500,0.25,0,0.1);
+  accurateForwardOutakePD(500,0.25,0,0.1);
   LF.spin(forward, 10000000, rpm);
   LB.spin(forward, 10000000, rpm);
   RB.stop(brake);
@@ -905,7 +939,7 @@ void skills4(){
   RF.stop(coast);
   RB.stop(coast);
   shoot(590);
-  BackwardPD(200, 0.3, 0.1);
+  accurateBackwardPD(200, 0.3, 0.1);
 }
 
 
@@ -920,13 +954,23 @@ void test(){
   stopshoot();
 }
 
+// test aligning
+void test2() {
+  visionAlign(RED_BALL, 0.9, 0.1);
+  accurateForwardIntakePD(2000, 0.9, 0, 0.1);
+  visionAlign(BLUE_GOAL, 0.9, 0.1);
+  accurateForwardPD(2000, 0.9, 0, 0.1);
+  vexDelay(1000000);
+}
+
+
 // functions to run during autonomous period
 void autonomous(){ // Forward KP = 0.2 KD = 0.1
 
  flipout(100);
  vexDelay(400);
  
- skills3();
+ skills4();
  //test();
 }
 
@@ -1136,6 +1180,9 @@ int main() {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
 
+  // tests
+  test2();
+
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
   if (Thomas) {
@@ -1151,6 +1198,5 @@ int main() {
   while (true) {
     wait(100, msec);
   }
-
   return 0;
 }

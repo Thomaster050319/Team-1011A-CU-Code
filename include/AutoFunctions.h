@@ -129,3 +129,14 @@ public:
 };
 
 void visionAlign(vex::vision::signature objSig, double vKP, double vKD);
+void resetEnc();
+void DriveBreak();
+void accurateForwardIntakePD(double goal, float KP,float KI,float KD);
+void accurateDriftPD(double goal, float KP,float KI,float KD);
+void accurateForwardOutakePD(double goal, float KP,float KI,float KD);
+void accurateForwardPD(double goal, float KP,float KI,float KD);
+void accurateBackwardPD(double goal, float KP, float KD);
+void accurateBackwardAlignPD(double goal, float KP, float KD);
+void accurateBackwardOPD(double goal, float KP, float KD);
+int avgEnc();
+bool hitDetected();
