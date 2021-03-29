@@ -22,10 +22,14 @@ extern motor BottomIndexer;
 ///Sensors Config///
 extern inertial inertial1;
 extern inertial inertial2;
+extern bumper bumperLeft;
+extern bumper bumperRight;
+extern accelerometer accel1;
+extern limit limit1;
+extern encoder encoder1;
 
 //Controller Config//
 extern controller Controller1;
-extern limit limit1;
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  *

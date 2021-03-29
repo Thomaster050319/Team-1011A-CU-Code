@@ -7,35 +7,39 @@
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
-// ---- PORT NUMBERS FOR VEXCODE CONFIGURED DEVICES ----
-/*
-
-*/
-// ---- END VEXCODE CONFIGURED DEVICES ----
-
-//Importing Public Libraries//
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 //Importing Pre-Existing Files//
 #include "vex.h"
-#include "v5.h"
-#include "v5_vcs.h"
 #include "robot-config.h"
 #include "AutoFunctions.h"
+#include "vision.h"
 //#include "AutonomousFunc.h"
 // ---------- End ------------//
 
-bool Thomas = true;
+
 
 vex::competition Competition;
 using namespace vex;
+
+
+////////////variables////////////
+
+bool Thomas = true; // true for Thomas's driver code, false for Liam's
+
+
+// Function that returns average encoder position of the drivetrain motors
 int avgEnc(){
   return((fabs(LF.position(deg) + LB.position(deg) + RF.position(deg) + RB.position(deg))) / 4);
 }
 
+bool hitDetected() {
+  if(inertial1.acceleration(yaxis) < 0 || inertial2.acceleration(yaxis) < 0 || accel1.acceleration() < 0 || LF.current()*2 < LB.current() || RF.current()*2 < RB.current()) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+// resets encoders for PID loops
 void resetEnc(){
   LB.resetPosition();
   LF.resetPosition();
@@ -43,6 +47,7 @@ void resetEnc(){
   RF.resetPosition();
 }
 
+// stops all drivetrain motors
 void DriveBreak(){
   LB.stop(brake);
   LF.stop(brake);
@@ -50,70 +55,52 @@ void DriveBreak(){
   RF.stop(brake);
 }
 
+// sets heading of inertial sensors to 0 for ease of use
 void Inertial_reset(){
   inertial1.setRotation(0, deg);
   inertial2.setRotation(0, deg);
 }
 
+// returns average heading of inertial sensor 1 and 2
 int Inertail_rotation(){
   return(fabs(inertial1.rotation() + inertial2.rotation()));
   //return (fabs(inertial2.rotation()))
 }
 
-int Inertial1_acceleration() {
-  return inertial1.acceleration(yaxis);
-}
+// 158 x is center of screen
 
-int Inertial2_acceleration() {
-  return inertial2.acceleration(yaxis);
-}
+void visionAlign(vex::vision::signature objSig, double vKP, double vKD) {
+  double vError = 69420;
+  double vDerivative = 0;
+  double vPrevError = 0;
+  double vMotorPower = 0;
 
-void AutoFunctions::resetPID() {
-  error = 0;
-  prevError = 0;
-  derivative = 0;
-  totalError = 0;
-}
+  while (vError != 0) {
+    Vision1.takeSnapshot(objSig);
+    vError = 158 - Vision1.largestObject.centerX;
+    vDerivative = vError - vPrevError;
+    vMotorPower = vError * vKP + vDerivative * vKD;
 
-void AutoFunctions::autoTurnTo(double degrees) {
-  int t = 0;               // Time variable
-  while (t < turnMargin) { // break when time exceeds the turnMargin
-    // PID
-    error = Inertail_rotation() - degrees;
-    derivative = error - prevError;
-    totalError += error;
-    prevError = error;
+    if (vError > 0) { // if the target is too much to the left, turn left
+      LF.spin(forward, vMotorPower, velocityUnits::pct);
+      LB.spin(forward, vMotorPower, velocityUnits::pct);
+      RF.spin(reverse, vMotorPower, velocityUnits::pct);
+      RB.spin(reverse, vMotorPower, velocityUnits::pct);
 
-    // Run motors according to PID values
-    LB.spin(forward,
-                 -error * turnkP - totalError * turnkI - derivative * turnkD,
-                 vex::pct);
-    RB.spin(forward,
-                 error * turnkP + totalError * turnkI + derivative * turnkD,
-                 vex::pct);
-    LF.spin(forward,
-                 -error * turnkP - totalError * turnkI - derivative * turnkD,
-                 vex::pct);
-    RF.spin(forward,
-                 error * turnkP + totalError * turnkI + derivative * turnkD,
-                 vex::pct);
-           
-    wait(loopTime, msec); // Wait to prevent wasted resources
-    // Exit the turn function once the robot is pointing in the correct
-    // direction
-    if (fabs(error) < turnRange) { // increase time value when the robot is
-                                   // pointing within turnRange
-      t += loopTime;
-    } else {
-      t = 0;
+    } else { // if the target is too much too much to the right, turn right
+      LF.spin(reverse, vMotorPower, velocityUnits::pct);
+      LB.spin(reverse, vMotorPower, velocityUnits::pct);
+      RF.spin(forward, vMotorPower, velocityUnits::pct);
+      RB.spin(forward, vMotorPower, velocityUnits::pct);
     }
+
+    vPrevError = vError;
+
+    task::sleep(50);
   }
-  resetPID();
-  // stop the drive
-  DriveBreak();
 }
 
-
+// PD loop to go forward while intaking
 void ForwardIntakePD(double goal, float KP,float KI,float KD){
   
   resetEnc(); // resets the Enc 
@@ -123,16 +110,14 @@ void ForwardIntakePD(double goal, float KP,float KI,float KD){
   double prevError = 0; 
   //Derivative//
   double derivative;
-  double totalerror;
   //lateral motor power//
   double lateralmotorpower;
 
   while (error > 3) {
       error = goal - avgEnc();
       derivative = error - prevError;
-      totalerror += error;
 
-      lateralmotorpower = (error * KP + totalerror * KI + derivative * KD);
+      lateralmotorpower = (error * KP + derivative * KD);
     
       IntakeR.spin(directionType::rev, 140, vex::velocityUnits::pct);
       IntakeL.spin(directionType::rev, 140, vex::velocityUnits::pct);
@@ -150,6 +135,7 @@ void ForwardIntakePD(double goal, float KP,float KI,float KD){
   DriveBreak();
 }
 
+// PD loop for drifting (stopping does not work ATM)
 void DriftPD(double goal, float KP,float KI,float KD){
   
   resetEnc(); // resets the Enc 
@@ -166,7 +152,7 @@ void DriftPD(double goal, float KP,float KI,float KD){
   int hitCount = 0;
 
   while (error > 3){
-    if (Inertial1_acceleration() < 0 || Inertial2_acceleration() < 0) {
+    if (hitDetected()) {
       hitCount++;
       if(hitCount == 2) {
         error = 0;
@@ -201,96 +187,7 @@ void DriftPD(double goal, float KP,float KI,float KD){
 
 }
 
-void ForwardWeirdIntakePD(double goal, float KP,float KI,float KD){
-  
-  resetEnc(); // resets the Enc 
-  //Error// 
-  double error = goal - avgEnc();
-  //Previous Error//
-  double prevError = 0; 
-  //Derivative//
-  double derivative;
-  double totalerror;
-  //lateral motor power//
-  double lateralmotorpower;
-
-  while (error > 3){
-    error = goal - avgEnc();
-    derivative = error - prevError;
-    totalerror += error;
-
-    lateralmotorpower = (error * KP + totalerror * KI + derivative * KD);
-
-    BottomIndexer.spin(directionType::rev, 60, vex::velocityUnits::pct);
-    TopIndexer.spin(directionType::rev, 40, vex::velocityUnits::pct);
-
-    if (error < 800) {
-      IntakeR.spin(directionType::rev, 140, vex::velocityUnits::pct);
-      IntakeL.spin(directionType::rev, 140, vex::velocityUnits::pct);
-    } else {
-      IntakeR.spin(directionType::fwd, 140, vex::velocityUnits::pct);
-      IntakeL.spin(directionType::fwd, 140, vex::velocityUnits::pct);
-    }
-    
-    LB.spin(forward,lateralmotorpower,pct);
-    LF.spin(forward,lateralmotorpower,pct);
-    RB.spin(forward,lateralmotorpower,pct);
-    RF.spin(forward,lateralmotorpower,pct);
-
-    prevError = error;
-      task::sleep(10);
-  }
-  DriveBreak();
-
-
-}
-
-void ForwardWeirdIntakePD2(double goal, float KP,float KI,float KD){
-  
-  resetEnc(); // resets the Enc 
-  //Error// 
-  double error = goal - avgEnc();
-  //Previous Error//
-  double prevError = 0; 
-  //Derivative//
-  double derivative;
-  double totalerror;
-  //lateral motor power//
-  double lateralmotorpower;
-
-  while (error > 3){
-    error = goal - avgEnc();
-    derivative = error - prevError;
-    totalerror += error;
-
-    lateralmotorpower = (error * KP + totalerror * KI + derivative * KD);
-
-    BottomIndexer.spin(directionType::rev, 60, vex::velocityUnits::pct);
-    TopIndexer.spin(directionType::rev, 40, vex::velocityUnits::pct);
-
-    if (error < 2100) {
-      IntakeR.spin(directionType::rev, 140, vex::velocityUnits::pct);
-      IntakeL.spin(directionType::rev, 140, vex::velocityUnits::pct);
-    } else {
-      IntakeR.stop();
-      IntakeL.stop();
-    }
-    
-    LB.spin(forward,lateralmotorpower,pct);
-    LF.spin(forward,lateralmotorpower,pct);
-    RB.spin(forward,lateralmotorpower,pct);
-    RF.spin(forward,lateralmotorpower,pct);
-
-    prevError = error;
-      task::sleep(10);
-  }
-  DriveBreak();
-
-
-}
-
-
-
+// PD loop that outakes while going forward
 void ForwardOutakePD(double goal, float KP,float KI,float KD){
   
   resetEnc(); // resets the Enc 
@@ -305,7 +202,7 @@ void ForwardOutakePD(double goal, float KP,float KI,float KD){
   double lateralmotorpower;
 
   while (error > 3){
-    if (Inertial1_acceleration() < 0 || Inertial2_acceleration() < 0) {
+    if (hitDetected()) {
       vexDelay(50);
       resetEnc();
       error = 0;
@@ -336,6 +233,8 @@ void ForwardOutakePD(double goal, float KP,float KI,float KD){
   }
   DriveBreak();
 }
+
+// PD loop that goes forward
 void ForwardPD(double goal, float KP,float KI,float KD){
   
   resetEnc(); // resets the Enc 
@@ -350,7 +249,7 @@ void ForwardPD(double goal, float KP,float KI,float KD){
   double lateralmotorpower;
 
   while (error > 3){
-    if (Inertial1_acceleration() < 0 || Inertial2_acceleration() < 0) {
+    if (hitDetected()) {
       vexDelay(50);
       resetEnc();
       error = 0;
@@ -381,6 +280,7 @@ void ForwardPD(double goal, float KP,float KI,float KD){
   DriveBreak();
 }
 
+// PD loop for going backwards
 void BackwardPD(double goal, float KP, float KD){
   resetEnc();
   double error = goal - avgEnc();
@@ -406,6 +306,7 @@ void BackwardPD(double goal, float KP, float KD){
   DriveBreak();
 }
 
+// function to align with field perimeter
 void BackwardAlignPD(double goal, float KP, float KD){
   resetEnc();
   double error = goal - avgEnc();
@@ -414,7 +315,7 @@ void BackwardAlignPD(double goal, float KP, float KD){
   double lateralmotorpower;
 
   while(error > 3) { 
-    if (Inertial1_acceleration() > 0 || Inertial2_acceleration() > 0) {
+    if (inertial1.acceleration(yaxis) > 0 || inertial2.acceleration(yaxis) > 0 || accel1.acceleration() > 0) {
       vexDelay(150);
       resetEnc();
       error = 0;
@@ -442,6 +343,7 @@ void BackwardAlignPD(double goal, float KP, float KD){
   DriveBreak();
 }
 
+// KD loop to go backward while outaking
 void BackwardOPD(double goal, float KP, float KD){
   resetEnc();
   double error = goal - avgEnc();
@@ -468,6 +370,7 @@ void BackwardOPD(double goal, float KP, float KD){
   DriveBreak();
 }
 
+// P loop to turn left
 void TurnLeft(double degree, float kP) {
     Inertial_reset();
   
@@ -487,6 +390,8 @@ void TurnLeft(double degree, float kP) {
     DriveBreak();
    
 }
+
+// P loop to turn right
 void TurnRight(double degree, float kP) {
     Inertial_reset();
   
@@ -506,6 +411,8 @@ void TurnRight(double degree, float kP) {
     DriveBreak();
    
 }
+
+// PD loop to turn right
 void TurnRightPD(double degree, float kP,float kD) {
     Inertial_reset();
   
@@ -531,6 +438,8 @@ void TurnRightPD(double degree, float kP,float kD) {
     DriveBreak();
    
 }
+
+// PD loop for turning left
 void TurnLeftPD(double degree, float kP,float kD) {
     Inertial_reset();
   
@@ -556,6 +465,8 @@ void TurnLeftPD(double degree, float kP,float kD) {
     DriveBreak();
    
 }
+
+// function to shoot ball into goal
 void shoot(int time) {
   TopIndexer.spin(directionType::fwd, 140, vex::velocityUnits::pct);
   BottomIndexer.spin(directionType::rev, 140, vex::velocityUnits::pct);
@@ -565,12 +476,16 @@ void shoot(int time) {
   
 
 }
+
+// function to idk
 void insuck(int time){
   TopIndexer.spin(directionType::rev, 20, vex::velocityUnits::pct);
   BottomIndexer.spin(directionType::fwd, 20, vex::velocityUnits::pct);
   task::sleep(time);
   TopIndexer.stop();
 }
+
+// function to stopball when limit switch is pressed
 void stopball(){
   Brain.Timer.reset(); 
   while(1){
@@ -586,10 +501,14 @@ void stopball(){
 
 
 }
+
+// function to stop indexers
 void stopshoot(){
   TopIndexer.stop(brake);
   BottomIndexer.stop(brake);
 }
+
+// function to stop drivetrain and intakes
 void forwardintakestop(){
   IntakeL.stop();
   IntakeR.stop();
@@ -598,11 +517,15 @@ void forwardintakestop(){
   RB.stop(brake);
   RF.stop(brake);
 }
+
+// function to run to activate flipout for set amount of time
 void flipout(int time){
   BottomIndexer.spin(directionType::rev, 140, vex::velocityUnits::pct);
   task::sleep(time);
   BottomIndexer.stop(brake);
 }
+
+// decore for set time
 void descore(int time){
     IntakeR.spin(directionType::rev, 140, vex::velocityUnits::pct);
     IntakeL.spin(directionType::rev, 140, vex::velocityUnits::pct);
@@ -612,6 +535,14 @@ void descore(int time){
     IntakeL.stop();
     BottomIndexer.stop();
 }
+
+
+
+
+
+
+
+// skils function 1.0
 void skills1(){ // Left = - Right = +
 //////////1st row ///////////
   ForwardIntakePD(1000,0.25,0,0.1);
@@ -702,6 +633,8 @@ void skills1(){ // Left = - Right = +
 
 
 }
+
+// skills function 2.0
 void skills2(){
   ForwardIntakePD(1000,0.27,0,0.1);
   vexDelay(100);
@@ -713,7 +646,7 @@ void skills2(){
   vexDelay(150);
   BackwardPD(550,0.25,0.1);
   vexDelay(200);
-  TurnRightPD(138,0.9,0.1);
+  TurnRightPD(139.78654,0.9,0.1); // 138
   vexDelay(200);
   ForwardIntakePD(1660,0.25,0,0.1);
   forwardintakestop();
@@ -778,6 +711,15 @@ void skills2(){
   BackwardPD(200, 0.3, 0.1);*/
   
 }
+
+
+
+
+
+
+
+
+// skills function 3.0
 void skills3(){
   ForwardIntakePD(935,0.27,0,0.5);
   vexDelay(150);
@@ -790,7 +732,7 @@ void skills3(){
   vexDelay(100);
   BackwardPD(730,0.25,0.1);
   vexDelay(100);
-  TurnRightPD(140,0.9,0.1);
+  TurnRightPD(141.3,0.9,0.1);//was 141
   vexDelay(100);
   ForwardIntakePD(1690,0.25,0,0.3); //was 1650
   forwardintakestop();
@@ -816,28 +758,28 @@ void skills3(){
   vexDelay(250);
   shoot(300);
   vexDelay(100);
-  TurnRightPD(108,0.7,0.1); //3rd to 4th angle 
-  ForwardIntakePD(2120,0.30,0,0.1);//3rd to 4th transition
+  TurnRightPD(106,0.7,0.1); //3rd to 4th angle 
+  ForwardIntakePD(2100,0.30,0,0.1);//3rd to 4th transition
   forwardintakestop();
   TurnLeftPD(85,0.9,0.1);
-  ForwardPD(2000,0.3,0,0.1); //4th goal forward
+  ForwardPD(1000,0.3,0,0.1); //4th goal forward
   insuck(200);
   shoot(500);// 4th goal shoot
   vexDelay(100);
-  BackwardPD(340,0.3,0.1);
+  BackwardPD(370,0.3,0.1); //340
   vexDelay(400);
-  TurnRightPD(92,0.8,0.1); // change from 93 to 92
+  TurnRightPD(93,0.8,0.1); // change from 93 to 92 to 94.5
   vexDelay(150);
-  ForwardIntakePD(1870,0.3,0,0.1);//4th to 5th
+  ForwardIntakePD(1850,0.3,0,0.1);//4th to 5th
   forwardintakestop();
   TurnLeftPD(46,0.8,0.1);
-  ForwardPD(2000,0.3,0,0.1); //was 590
+  ForwardPD(800,0.3,0,0.1); //was 590
   insuck(200);
   shoot(600);
-  BackwardPD(710,0.3,0.1);//changed from 650
+  BackwardPD(690,0.3,0.1);//changed from 650
   vexDelay(200);
-  TurnRightPD(141, 0.8, 0.3);// turn from 5th to 6th
-  ForwardIntakePD(1620, 0.27, 0, 0.1);//1580
+  TurnRightPD(137, 0.8, 0.3);// turn from 5th to 6th
+  ForwardIntakePD(1610, 0.27, 0, 0.1);//1580
   forwardintakestop();
   TurnLeftPD(92,0.9,0.1);
   ForwardPD(2000,0.3,0,0.1); // was 390
@@ -883,6 +825,128 @@ void skills3(){
   shoot(590);
   BackwardPD(200, 0.3, 0.1);
 }
+
+
+
+
+
+// skills function 4.0
+void skills4(){
+  // --- First Goal --- //
+  accurateForwardIntakePD(935,0.27,0,0.5);
+  vexDelay(150);
+  TurnLeftPD(133,0.75,0.3);
+  forwardintakestop();
+  vexDelay(100);
+  accurateForwardPD(1150,0.4,0,0.3);
+  insuck(400);
+  shoot(450);
+  vexDelay(100);
+  accurateBackwardPD(730,0.25,0.1);
+  vexDelay(100);
+  TurnRightPD(141.3,0.9,0.1); //was 141
+  visionAlign(RED_BALL, 0.9, 0.1); // aligns with the red ball
+  accurateForwardIntakePD(1690,0.25,0,0.3); //was 1650
+  forwardintakestop();
+  TurnLeftPD(93,0.9,0.1);
+  accurateForwardPD(2000,0.3,0,0.1); //2nd goal forward (2000 to gauruntee touching)
+  insuck(300);
+  shoot(400);
+  vexDelay(100);
+  accurateBackwardPD(400,0.25,0.1);//changed from 600 (1st wall drift)
+  forwardintakestop();
+  TurnRightPD(65,0.7,0.1);
+  visionAlign(RED_BALL, 0.9, 0.1); // align with red ball
+  accurateForwardIntakePD(2210,0.27,0,0.1);
+  forwardintakestop();
+  vexDelay(100);
+  insuck(200);
+  shoot(600); // 3rd goal
+  vexDelay(150);
+  ///////// 2nd row /////////
+  accurateBackwardOPD(380,0.3,0.1);
+  vexDelay(100);
+  forwardintakestop();
+  vexDelay(250);
+  shoot(300);
+  vexDelay(100);
+  TurnRightPD(106,0.7,0.1); //3rd to 4th angle 
+  visionAlign(RED_BALL, 0.9, 0.1); // align with ball
+  accurateForwardIntakePD(2100,0.30,0,0.1);//3rd to 4th transition
+  forwardintakestop();
+  TurnLeftPD(85,0.9,0.1);
+  accurateForwardPD(1000,0.3,0,0.1); //4th goal forward
+  insuck(200);
+  shoot(500);// 4th goal shoot
+  vexDelay(100);
+  accurateBackwardPD(370,0.3,0.1); //340
+  vexDelay(400);
+  TurnRightPD(93,0.8,0.1); // change from 93 to 92 to 94.5
+  visionAlign(RED_BALL, 0.9, 0.1); // aligns with red ball
+  accurateForwardIntakePD(1850,0.3,0,0.1);//4th to 5th
+  forwardintakestop();
+  TurnLeftPD(46,0.8,0.1);
+  accurateForwardPD(800,0.3,0,0.1); //was 590
+  insuck(200);
+  shoot(600);
+  accurateBackwardPD(690,0.3,0.1);//changed from 650
+  vexDelay(200);
+  TurnRightPD(137, 0.8, 0.3);// turn from 5th to 6th
+  visionAlign(RED_BALL, 0.9, 0.1);
+  accurateForwardIntakePD(1610, 0.27, 0, 0.1);//1580
+  forwardintakestop();
+  TurnLeftPD(92,0.9,0.1);
+  accurateForwardPD(2000,0.3,0,0.1); // was 390
+  insuck(200);
+  shoot(600);
+  accurateBackwardPD(355,0.3,0.1);
+  TurnRightPD(64,0.8,0.1);
+  visionAlign(RED_BALL, 0.9, 0.1);
+  accurateForwardIntakePD(2225, 0.3, 0, 0.1);
+  forwardintakestop();
+  insuck(400);
+  shoot(540);
+  accurateBackwardOPD(350,0.3,0.1);
+  TurnRightPD(120,0.9,0.1);
+  accurateBackwardAlignPD(350,0.6,0.3);
+  accurateForwardIntakePD(2280,0.35,0,0.1);
+  forwardintakestop();
+  TurnLeftPD(90,0.9,0.1);
+  accurateForwardPD(300,0.3,0,0.1);
+  insuck(400);
+  shoot(720);
+  forwardintakestop();
+  descore(1000);
+  accurateBackwardOPD(335, 0.2, 0.1);
+  IntakeL.stop();
+  IntakeR.stop();
+  TopIndexer.stop();
+  BottomIndexer.stop(); 
+  TurnLeftPD(180,0.8,0.1); //changed from 182
+  visionAlign(RED_BALL, 0.9, 0.1); // align with red ball
+  accurateForwardIntakePD(1000, 0.35, 0, 0.01);
+  
+  
+  TurnLeftPD(10, 0.8, 0.1);
+  accurateForwardOutakePD(500,0.25,0,0.1);
+  LF.spin(forward, 10000000, rpm);
+  LB.spin(forward, 10000000, rpm);
+  RB.stop(brake);
+  RF.stop(brake);
+  vexDelay(300);
+  LF.stop(coast);
+  LB.stop(coast);
+  RF.stop(coast);
+  RB.stop(coast);
+  shoot(590);
+  accurateBackwardPD(200, 0.3, 0.1);
+}
+
+
+
+
+
+// test stopball functions
 void test(){
   shoot(300);
   stopball();
@@ -890,15 +954,28 @@ void test(){
   stopshoot();
 }
 
+// test aligning
+void test2() {
+  visionAlign(RED_BALL, 0.9, 0.1);
+  accurateForwardIntakePD(2000, 0.9, 0, 0.1);
+  visionAlign(BLUE_GOAL, 0.9, 0.1);
+  accurateForwardPD(2000, 0.9, 0, 0.1);
+  vexDelay(1000000);
+}
+
+
+// functions to run during autonomous period
 void autonomous(){ // Forward KP = 0.2 KD = 0.1
 
  flipout(100);
  vexDelay(400);
  
- skills3();
+ skills4();
  //test();
 }
 
+
+// Thomas's driver control code
 void usercontrol(){
 
   bool Donald = false;
@@ -996,116 +1073,68 @@ void usercontrol(){
   }
 }
 
-void usercontrol2(){
+void liamButtonL1() {
+  TopIndexer.spin(reverse, 400, rpm);
+  BottomIndexer.spin(reverse, 400, rpm);
+  waitUntil(!Controller1.ButtonL1.pressing());
+  TopIndexer.stop();
+  BottomIndexer.stop();
+}
 
-  bool Donald = false;
-  int deadband = 0;
-  while (1) {
-    Brain.Screen.newLine();
-    double drive = 1;
-    /*int Ch1 = Controller1.Axis1.value();
-    int Ch3 = Controller1.Axis3.value();
-    int Ch4 = Controller1.Axis4.value();
-    Brain.Screen.print(Ch4);
-    LeftMotorF.spin(directionType::fwd, Ch3 - Ch1 - Ch4,velocityUnits::pct);
-    LeftMotorB.spin(directionType::fwd, Ch3 + Ch1 - Ch4,velocityUnits::pct);
-    RightMotorF.spin(directionType::fwd, Ch3 + Ch1 + Ch4,velocityUnits::pct);
-    RightMotorB.spin(directionType::fwd, Ch3 - Ch1 + Ch4,velocityUnits::pct);*/
-    //Get the velocity percentage of the left motor. (Axis3 + Axis1)
-    int leftMotorSpeed =
-        Controller1.Axis3.position() + Controller1.Axis1.position() * drive;
-    // Get the velocity percentage of the right motor. (Axis3 - Axis1)
-    int rightMotorSpeed =
-        Controller1.Axis3.position() - Controller1.Axis1.position()* drive;
-    // Set the speed of the left motor. If the value is less than the deadband,
-    // set it to zero.
-    if (Controller1.ButtonUp.pressing()){
-      drive = 1.0;
-    
-    }
-    if (Controller1.ButtonDown.pressing()){
-      drive = 0.5;
-    }
-    if (Controller1.ButtonL1.pressing()) {
-      Donald = true;
-    }
-    if (Controller1.ButtonUp.pressing()) {
-      Donald = false;
-    }
-      if (abs(leftMotorSpeed) < deadband) {
-      // Set the speed to zero.
-      LF.setVelocity(0, percent);
-      LB.setVelocity(0, percent);
-    } else {
-      // Set the speed to leftMotorSpeed
-      LF.setVelocity(leftMotorSpeed, percent);
-      LB.setVelocity(leftMotorSpeed, percent);
-    }
-    // Set the speed of the right motor. If the value is less than the deadband,
-    // set it to zero.
-    if (abs(rightMotorSpeed) < deadband) {
-      // Set the speed to zero
-      RF.setVelocity(0, percent);
-      RB.setVelocity(0, percent);
-    } else {
-      // Set the speed to rightMotorSpeed
-      RF.setVelocity(rightMotorSpeed, percent);
-      RB.setVelocity(rightMotorSpeed, percent);
-    }
-    // Spin both motors in the forward direction.
-    LF.spin(forward);
-    LB.spin(forward);
-    RF.spin(forward);
-    RB.spin(forward);
-    wait(25, msec);
-    // Tank Drive Code
-    if (Donald == true) {
-      IntakeR.spin(directionType::rev, 140, vex::velocityUnits::pct);
-      IntakeL.spin(directionType::rev, 140, vex::velocityUnits::pct);
-      BottomIndexer.spin(directionType::rev, 140, vex::velocityUnits::pct);
-    } else if (Donald == false) {
-      IntakeR.stop();
-      IntakeL.stop();
-      BottomIndexer.stop();
-    }
-    if (Controller1.ButtonR1.pressing()) {
-/*      TopIndexer.spin(directionType::rev, 140, vex::velocityUnits::pct);
-      BottomIndexer.spin(directionType::fwd, 140, vex::velocityUnits::pct);
-      IntakeR.spin(directionType::fwd, 127, vex::velocityUnits::pct);
-      IntakeL.spin(directionType::fwd, 127, vex::velocityUnits::pct);*/
-      IntakeL.spin(reverse, 140, percent);
-      IntakeR.spin(reverse, 140, percent);
-    } else if (Controller1.ButtonR2.pressing()) {
-/*       TopIndexer.spin(directionType::fwd, 140, vex::velocityUnits::pct);
-      BottomIndexer.spin(directionType::rev, 140, vex::velocityUnits::pct);*/
-      IntakeL.spin(forward, 140, percent);
-      IntakeR.spin(forward, 140, percent);
-    } else if (Controller1.ButtonL2.pressing()) {
-/*      IntakeL.spin(directionType::rev, 127, vex::velocityUnits::pct);
-      IntakeR.spin(directionType::rev, 127, vex::velocityUnits::pct);
-      BottomIndexer.spin(directionType::rev, 140, vex::velocityUnits::pct); */
-            TopIndexer.spin(reverse, 140, percent);
-      BottomIndexer.spin(reverse, 140, percent);
-    } else if (Controller1.ButtonL1.pressing()) {
-/*      IntakeR.spin(directionType::fwd, 140, vex::velocityUnits::pct);
-      IntakeL.spin(directionType::fwd, 140, vex::velocityUnits::pct);
-      BottomIndexer.spin(directionType::fwd, 140, vex::velocityUnits::pct);*/
-            TopIndexer.spin(forward, 140, percent);
-      BottomIndexer.spin(forward, 140, percent);
-    } else {
-      TopIndexer.stop();
-      BottomIndexer.stop();
-      IntakeL.stop();
-      IntakeR.stop();
-    }
-  }
+void liamButtonL2() {
+  TopIndexer.spin(forward, 600, rpm);
+  BottomIndexer.spin(forward, 600, rpm);
+  waitUntil(!Controller1.ButtonL2.pressing());
+  TopIndexer.stop();
+  BottomIndexer.stop();
+}
+
+void liamButtonR1() {
+  IntakeL.spin(reverse, 600, rpm);
+  IntakeR.spin(reverse, 600, rpm);
+  waitUntil(!Controller1.ButtonR1.pressing());
+  IntakeL.stop();
+  IntakeR.stop();
+}
+
+void liamButtonR2() {
+  IntakeL.spin(forward, 600, rpm);
+  IntakeR.spin(forward, 600, rpm);
+  waitUntil(!Controller1.ButtonR2.pressing());
+  IntakeL.stop();
+  IntakeR.stop();
 }
 
 
+
+// Liam's drivercontrol code
+void usercontrol2() {
+  Controller1.ButtonL1.pressed(liamButtonL1);
+  Controller1.ButtonL2.pressed(liamButtonL2);
+  Controller1.ButtonR1.pressed(liamButtonR1);
+  Controller1.ButtonR2.pressed(liamButtonR2);
+
+  while(true) {
+	// arcade control
+  int drivetrainLeftSideSpeed = Controller1.Axis3.position() + Controller1.Axis1.position();
+  int drivetrainRightSideSpeed = Controller1.Axis3.position() - Controller1.Axis1.position();
+  
+
+	LB.spin(forward, drivetrainLeftSideSpeed, percent);
+  LF.spin(forward, drivetrainLeftSideSpeed, percent);
+  RB.spin(forward, drivetrainRightSideSpeed, percent);
+  RB.spin(forward, drivetrainRightSideSpeed, percent);
+
+	vexDelay(5);
+  }
+}
+
+// Function that returns average temperature of drivetrain motors
 double drivetrainTemp() {
   return (LB.temperature() + LF.temperature() + RB.temperature() + RF.temperature()) / 4;
 }
 
+// Main thread for brain screen display
 int brainScreen() {
   // draw boxes here so we dont waste cpu resources
   Brain.Screen.setPenColor(white);
@@ -1118,7 +1147,7 @@ int brainScreen() {
   Brain.Screen.print("1011A");
   Brain.Screen.setPenColor(white);
 
-  for(;;) {
+  while(true) {
     Brain.Screen.setFont(monoL);
     
     // display text in the boxes
@@ -1135,9 +1164,9 @@ int brainScreen() {
   return 0;
 }
 
+// pre autonomous code
 void pre_auton(){
-  // Initializing Robot Configuration. DO NOT REMOVE!
-  vexcodeInit();
+
   inertial1.calibrate();
   inertial2.calibrate();
   
@@ -1148,6 +1177,12 @@ void pre_auton(){
 }
 
 int main() {
+  // Initializing Robot Configuration. DO NOT REMOVE!
+  vexcodeInit();
+
+  // tests
+  test2();
+
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
   if (Thomas) {
@@ -1158,20 +1193,10 @@ int main() {
 
   // Run the pre-autonomous function.
   pre_auton();
+
   // Prevent main from exiting with an infinite loop.
   while (true) {
     wait(100, msec);
   }
-  inertial1.calibrate();
-  // waits for the Inertial Sensor to calibrate
-  while (inertial1.isCalibrating()) {
-    wait(100, msec);
-  }
-  waitUntil((inertial1.rotation(degrees) >= 90.0));
-  RB.stop();
-  RF.stop();
-  LB.stop();
-  LF.stop();
-  wait(1, seconds); 
   return 0;
 }
