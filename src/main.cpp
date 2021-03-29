@@ -30,6 +30,14 @@ int avgEnc(){
   return((fabs(LF.position(deg) + LB.position(deg) + RF.position(deg) + RB.position(deg))) / 4);
 }
 
+bool hitDetected() {
+  if(inertial1.acceleration(yaxis) < 0 || inertial2.acceleration(yaxis) < 0 || accel1.acceleration() < 0 || bumperLeft.pressing() || bumperRight.pressing()) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 // resets encoders for PID loops
 void resetEnc(){
   LB.resetPosition();
@@ -57,19 +65,6 @@ int Inertail_rotation(){
   return(fabs(inertial1.rotation() + inertial2.rotation()));
   //return (fabs(inertial2.rotation()))
 }
-
-// function that returns Y value of inertial sensor 1
-int Inertial1_acceleration() {
-  return inertial1.acceleration(yaxis);
-}
-
-// function that returns Y value of inertial sensor 2
-int Inertial2_acceleration() {
-  return inertial2.acceleration(yaxis);
-}
-
-
-
 
 // PD loop to go forward while intaking
 void ForwardIntakePD(double goal, float KP,float KI,float KD){
@@ -123,7 +118,7 @@ void DriftPD(double goal, float KP,float KI,float KD){
   int hitCount = 0;
 
   while (error > 3){
-    if (Inertial1_acceleration() < 0 || Inertial2_acceleration() < 0) {
+    if (hitDetected()) {
       hitCount++;
       if(hitCount == 2) {
         error = 0;
@@ -173,7 +168,7 @@ void ForwardOutakePD(double goal, float KP,float KI,float KD){
   double lateralmotorpower;
 
   while (error > 3){
-    if (Inertial1_acceleration() < 0 || Inertial2_acceleration() < 0) {
+    if (hitDetected()) {
       vexDelay(50);
       resetEnc();
       error = 0;
@@ -220,7 +215,7 @@ void ForwardPD(double goal, float KP,float KI,float KD){
   double lateralmotorpower;
 
   while (error > 3){
-    if (Inertial1_acceleration() < 0 || Inertial2_acceleration() < 0) {
+    if (hitDetected()) {
       vexDelay(50);
       resetEnc();
       error = 0;
@@ -286,7 +281,7 @@ void BackwardAlignPD(double goal, float KP, float KD){
   double lateralmotorpower;
 
   while(error > 3) { 
-    if (Inertial1_acceleration() > 0 || Inertial2_acceleration() > 0) {
+    if (inertial1.acceleration(yaxis) > 0 || inertial2.acceleration(yaxis) > 0 || accel1.acceleration() > 0) {
       vexDelay(150);
       resetEnc();
       error = 0;
