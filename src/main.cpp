@@ -11,7 +11,6 @@
 #include "vex.h"
 #include "robot-config.h"
 #include "AutoFunctions.h"
-#include "vision.h"
 //#include "AutonomousFunc.h"
 // ---------- End ------------//
 

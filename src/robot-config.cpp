@@ -22,8 +22,12 @@ motor BottomIndexer = motor(PORT1, ratio6_1, false); // 1
 inertial inertial1 = inertial(PORT11); // 11
 inertial inertial2 = inertial(PORT3); // 3
 
+bumper bumperLeft = bumper(Brain.ThreeWirePort.A); // A
+bumper bumperRight = bumper(Brain.ThreeWirePort.B); // B
+accelerometer accel1 = accelerometer(Brain.ThreeWirePort.C, false); // C
 limit limit1 = limit(Brain.ThreeWirePort.D); // D
-accelerometer accel1(Brain.ThreeWirePort.C, false);
+encoder encoder1 = encoder(Brain.ThreeWirePort.E); // E and F
+
 
 //𝕮𝖔𝖓𝖙𝖗𝖔𝖑𝖑𝖊𝖗 𝕮𝖔𝖓𝖋𝖎𝖌//
 controller Controller1 = controller(primary);

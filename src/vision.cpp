@@ -1,4 +1,3 @@
-#include "vision.h"
 #include "vex.h"
 #include "AutoFunctions.h"
 
