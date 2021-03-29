@@ -128,7 +128,7 @@ public:
   void flipout(); // Run hood flipout
 };
 
-void visionAlign(vex::vision::signature objSig, double vKP, double vKD);
+//void visionAlign(vex::vision::signature objSig, double vKP, double vKD);
 void resetEnc();
 void DriveBreak();
 void accurateForwardIntakePD(double goal, float KP,float KI,float KD);

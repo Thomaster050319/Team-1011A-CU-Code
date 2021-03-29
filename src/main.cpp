@@ -23,7 +23,7 @@ using namespace vex;
 
 ////////////variables////////////
 
-bool Thomas = true; // true for Thomas's driver code, false for Liam's
+bool Thomas = false; // true for Thomas's driver code, false for Liam's
 
 
 // Function that returns average encoder position of the drivetrain motors
@@ -69,7 +69,7 @@ int Inertail_rotation(){
 
 // 158 x is center of screen
 
-void visionAlign(vex::vision::signature objSig, double vKP, double vKD) {
+/*void visionAlign(vex::vision::signature objSig, double vKP, double vKD) {
   double vError = 69420;
   double vDerivative = 0;
   double vPrevError = 0;
@@ -97,6 +97,18 @@ void visionAlign(vex::vision::signature objSig, double vKP, double vKD) {
     vPrevError = vError;
 
     task::sleep(50);
+  }
+  DriveBreak();
+}*/
+
+void visionAlign() {
+  while(true) {
+    Vision1.takeSnapshot(RED_BALL);
+    if(Vision1.installed()) {
+      Brain.Screen.print("yay");
+    } else {
+      Brain.Screen.print("fuck");
+    }
   }
 }
 
@@ -830,7 +842,7 @@ void skills3(){
 
 
 
-// skills function 4.0
+/*// skills function 4.0
 void skills4(){
   // --- First Goal --- //
   accurateForwardIntakePD(935,0.27,0,0.5);
@@ -940,7 +952,7 @@ void skills4(){
   RB.stop(coast);
   shoot(590);
   accurateBackwardPD(200, 0.3, 0.1);
-}
+}*/
 
 
 
@@ -956,11 +968,13 @@ void test(){
 
 // test aligning
 void test2() {
-  visionAlign(RED_BALL, 0.9, 0.1);
-  accurateForwardIntakePD(2000, 0.9, 0, 0.1);
-  visionAlign(BLUE_GOAL, 0.9, 0.1);
-  accurateForwardPD(2000, 0.9, 0, 0.1);
-  vexDelay(1000000);
+  vexDelay(1000);
+  visionAlign();
+  //visionAlign(RED_BALL, 1, 1);
+  //accurateForwardIntakePD(2000, 0.9, 0, 0.1);
+  //visionAlign(BLUE_GOAL, 0.9, 0.1);
+  //accurateForwardPD(2000, 0.9, 0, 0.1);
+  //vexDelay(1000000);
 }
 
 
@@ -970,7 +984,7 @@ void autonomous(){ // Forward KP = 0.2 KD = 0.1
  flipout(100);
  vexDelay(400);
  
- skills4();
+ //skills4();
  //test();
 }
 
@@ -1181,10 +1195,12 @@ int main() {
   vexcodeInit();
 
   // tests
-  test2();
+  //test2();
+
+  Controller1.ButtonA.pressed(test2);
 
   // Set up callbacks for autonomous and driver control periods.
-  Competition.autonomous(autonomous);
+  Competition.autonomous(test2);
   if (Thomas) {
     Competition.drivercontrol(usercontrol);
   } else {
