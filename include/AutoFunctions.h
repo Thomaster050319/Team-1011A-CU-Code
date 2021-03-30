@@ -103,7 +103,8 @@ public:
   void dumbForward(double degrees, double iDeg, double fDeg, double speed); // No auto index
   void dumbBackward(double degrees, double iDeg, double fDeg, double speed); //No auto index
   void autoBackward(double degrees, double iDeg, double fDeg, double speed); // Backward auto function. degrees > iDeg + fDeg
-  void autoTurnTo(double degrees); //PID turn, +degrees turns right, -degrees turns left
+  void autoTurnToR(double degrees); //PID turn, +degrees turns right, -degrees turns left
+  void autoTurnToL(double degrees);
   void autoStrafeLeft(double degrees, double iDeg, double fDeg, double speed); // Strafe left auto function. degrees > iDeg + fDeg
   void autoStrafeRight(double degrees, double iDeg, double fDeg, double speed); // Strafe right auto function. degrees > iDeg + fDeg
   void intake(double speed); // Run intakes at speed
