@@ -60,7 +60,7 @@ void visionAlign(vex::vision::signature objSig, double vKP, double vKD) {
   double vPrevError = 0;
   double vMotorPower = 0;
 
-  while (vError != 0){
+  while (fabs(vError) > 4 || fabs(vDerivative) > 5){
     Vision1.takeSnapshot(objSig);
     vError = 158 - Vision1.largestObject.centerX;
     vDerivative = vError - vPrevError;
@@ -69,16 +69,20 @@ void visionAlign(vex::vision::signature objSig, double vKP, double vKD) {
     Controller1.Screen.print(Vision1.largestObject.width);
 
     if (Vision1.largestObject.centerX > 158) { // if the target is too much to the left, turn left
-      LF.spin(forward, vMotorPower, velocityUnits::pct);
-      LB.spin(forward, vMotorPower, velocityUnits::pct);
-      RF.spin(reverse, vMotorPower, velocityUnits::pct);
-      RB.spin(reverse, vMotorPower, velocityUnits::pct);
+     // LF.spin(forward, vMotorPower, velocityUnits::pct);
+      //LB.spin(forward, vMotorPower, velocityUnits::pct);
+      //RF.spin(reverse, vMotorPower, velocityUnits::pct);
+      //RB.spin(reverse, vMotorPower, velocityUnits::pct);
+      LB.spin(reverse, 20, rpm);
+      RB.spin(forward, 20, rpm);
 
     } else if (Vision1.largestObject.centerX < 158){ // if the target is too much too much to the right, turn right
-      LF.spin(forward, -vMotorPower, velocityUnits::pct);
-      LB.spin(forward, -vMotorPower, velocityUnits::pct);
-      RF.spin(reverse, -vMotorPower, velocityUnits::pct);
-      RB.spin(reverse, -vMotorPower, velocityUnits::pct);
+      //LF.spin(forward, -vMotorPower, velocityUnits::pct);
+      //LB.spin(forward, -vMotorPower, velocityUnits::pct);
+      //RF.spin(reverse, -vMotorPower, velocityUnits::pct);
+      //RB.spin(reverse, -vMotorPower, velocityUnits::pct);
+      LB.spin(forward, 20, rpm);
+      LF.spin(forward, 20, rpm);
     }
 
     vPrevError = vError;
@@ -1073,8 +1077,9 @@ void test(){
 
 void autonomous(){ // Forward KP = 0.2 KD = 0.1
 
- flipout(100);
- vexDelay(400);
+ //flipout(100);
+ //vexDelay(400);
+ visionAlign(RED_BALL, 0.3, 0.1);
  
  //skills3();
  
