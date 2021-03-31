@@ -36,7 +36,7 @@ bool Thomas = true;
 vex::competition Competition;
 using namespace vex;
 int avgEnc(){
-  return((fabs(LF.position(deg) + LB.position(deg) + RF.position(deg) + RB.position(deg))) / 4);
+  return(fabs((LF.position(deg) + LB.position(deg) + RF.position(deg) + RB.position(deg))) / 4);
 }
 
 void resetEnc(){
@@ -242,7 +242,7 @@ void DriftPD(double goal, float KP,float KI,float KD){
   int hitCount = 0;
 
   while (error > 3){
-    if (Inertial1_acceleration() < 0 || Inertial2_acceleration() < 0) {
+    if (Inertial1_acceleration() < 0 || Inertial2_acceleration() < 0 ) {
       hitCount++;
       if(hitCount == 2) {
         error = 0;
@@ -855,18 +855,18 @@ void skills2(){
   
 }
 void skills3(){
-  ForwardIntakePD(935,0.27,0,0.5);
+  ForwardIntakePD(960,0.27,0,0.5);
   vexDelay(150);
-  TurnLeftPD(133,0.75,0.3);
+  autoFunctions.autoTurnToL(135);
   forwardintakestop();
   vexDelay(100);
   ForwardPD(1150,0.4,0,0.3);
   insuck(400);
   shoot(450);
   vexDelay(100);
-  BackwardPD(730,0.25,0.1);
+  BackwardPD(700,0.25,0.1);
   vexDelay(100);
-  TurnRightPD(140,0.9,0.1);
+  TurnRightPD(135,0.9,0.1);
   vexDelay(100);
   ForwardIntakePD(1690,0.25,0,0.3); //was 1650
   forwardintakestop();
@@ -883,17 +883,17 @@ void skills3(){
   forwardintakestop();
   vexDelay(100);
   insuck(200);
-  shoot(600); // 3rd goal
+  shoot(500); // 3rd goal
   vexDelay(150);
   ///////// 2nd row /////////
-  BackwardOPD(380,0.3,0.1);
+  BackwardOPD(340,0.3,0.1);
   vexDelay(100);
   forwardintakestop();
   vexDelay(250);
   shoot(300);
   vexDelay(100);
-  TurnRightPD(108,0.7,0.1); //3rd to 4th angle 
-  ForwardIntakePD(2120,0.30,0,0.1);//3rd to 4th transition
+  TurnRightPD(103,0.7,0.1); //3rd to 4th angle 
+  ForwardIntakePD(2090,0.30,0,0.1);//3rd to 4th transition
   forwardintakestop();
   TurnLeftPD(85,0.9,0.1);
   ForwardPD(2000,0.3,0,0.1); //4th goal forward
@@ -902,7 +902,7 @@ void skills3(){
   vexDelay(100);
   BackwardPD(340,0.3,0.1);
   vexDelay(400);
-  TurnRightPD(92,0.8,0.1); // change from 93 to 92
+  TurnRightPD(93,0.8,0.1); // change from 93 to 92
   vexDelay(150);
   ForwardIntakePD(1870,0.3,0,0.1);//4th to 5th
   forwardintakestop();
@@ -913,7 +913,7 @@ void skills3(){
   BackwardPD(710,0.3,0.1);//changed from 650
   vexDelay(200);
   TurnRightPD(141, 0.8, 0.3);// turn from 5th to 6th
-  ForwardIntakePD(1620, 0.27, 0, 0.1);//1580
+  ForwardIntakePD(1580, 0.27, 0, 0.1);//1580
   forwardintakestop();
   TurnLeftPD(92,0.9,0.1);
   ForwardPD(2000,0.3,0,0.1); // was 390
@@ -946,6 +946,114 @@ void skills3(){
   
   
   TurnLeftPD(10, 0.8, 0.1);
+  ForwardOutakePD(500,0.25,0,0.1);
+  LF.spin(forward, 10000000, rpm);
+  LB.spin(forward, 10000000, rpm);
+  RB.stop(brake);
+  RF.stop(brake);
+  vexDelay(300);
+  LF.stop(coast);
+  LB.stop(coast);
+  RF.stop(coast);
+  RB.stop(coast);
+  shoot(590);
+  BackwardPD(200, 0.3, 0.1);
+}
+void skills5(){
+  ForwardIntakePD(935,0.27,0,0.5);
+  vexDelay(150);
+  autoFunctions.autoTurnToL(132);
+  forwardintakestop();
+  vexDelay(100);
+  ForwardPD(1150,0.4,0,0.3);
+  insuck(400);
+  shoot(450);
+  vexDelay(100);
+  BackwardPD(680,0.25,0.1);
+  vexDelay(100);
+  autoFunctions.autoTurnToL(-140);
+  vexDelay(100);
+  ForwardIntakePD(1660,0.25,0,0.3); //was 1650
+  forwardintakestop();
+  autoFunctions.autoTurnToL(93);
+  ForwardPD(2000,0.3,0,0.1); //2nd goal forward (2000 to gauruntee touching)
+  insuck(300);
+  shoot(400);
+  vexDelay(100);
+  BackwardPD(400,0.25,0.1);//changed from 600 (1st wall drift)
+  forwardintakestop();
+  autoFunctions.autoTurnToR(65);
+  vexDelay(200);
+  ForwardIntakePD(2210,0.27,0,0.1);
+  forwardintakestop();
+  vexDelay(100);
+  insuck(200);
+  shoot(600); // 3rd goal
+  vexDelay(150);
+  ///////// 2nd row /////////
+  BackwardOPD(320,0.3,0.1);
+  vexDelay(100);
+  forwardintakestop();
+  vexDelay(250);
+  shoot(300);
+  vexDelay(100);
+  TurnRightPD(108,0.7,0.1); //3rd to 4th angle
+  autoFunctions.autoTurnToR(108);
+  ForwardIntakePD(2120,0.30,0,0.1);//3rd to 4th transition
+  forwardintakestop();
+  TurnLeftPD(85,0.9,0.1);
+  autoFunctions.autoTurnToL(85);
+  ForwardPD(2000,0.3,0,0.1); //4th goal forward
+  insuck(200);
+  shoot(500);// 4th goal shoot
+  vexDelay(100);
+  BackwardPD(340,0.3,0.1);
+  vexDelay(400);
+  autoFunctions.autoTurnToR(92); // change from 93 to 92
+  vexDelay(150);
+  ForwardIntakePD(1870,0.3,0,0.1);//4th to 5th
+  forwardintakestop();
+  autoFunctions.autoTurnToL(46);
+  ForwardPD(2000,0.3,0,0.1); //was 590
+  insuck(200);
+  shoot(600);
+  BackwardPD(710,0.3,0.1);//changed from 650
+  vexDelay(200);
+  TurnRightPD(141, 0.8, 0.3);// turn from 5th to 6th
+  autoFunctions.autoTurnToR(141);
+  ForwardIntakePD(1620, 0.27, 0, 0.1);//1580
+  forwardintakestop();
+  autoFunctions.autoTurnToL(92);
+  ForwardPD(2000,0.3,0,0.1); // was 390
+  insuck(200);
+  shoot(600);
+  BackwardPD(355,0.3,0.1);
+  autoFunctions.autoTurnToR(64);
+  ForwardIntakePD(2225, 0.3, 0, 0.1);
+  forwardintakestop();
+  insuck(400);
+  shoot(540);
+  BackwardOPD(350,0.3,0.1);
+  autoFunctions.autoTurnToR(120);
+  BackwardAlignPD(350,0.6,0.3);
+  ForwardIntakePD(2280,0.35,0,0.1);
+  forwardintakestop();
+  autoFunctions.autoTurnToL(90);
+  ForwardPD(300,0.3,0,0.1);
+  insuck(400);
+  shoot(720);
+  forwardintakestop();
+  descore(1000);
+  BackwardOPD(335, 0.2, 0.1);
+  IntakeL.stop();
+  IntakeR.stop();
+  TopIndexer.stop();
+  BottomIndexer.stop();
+  autoFunctions.autoTurnToL(180); 
+  ForwardIntakePD(1000, 0.35, 0, 0.01);
+  
+  
+  autoFunctions.autoTurnToL(10);
   ForwardOutakePD(500,0.25,0,0.1);
   LF.spin(forward, 10000000, rpm);
   LB.spin(forward, 10000000, rpm);
@@ -1076,7 +1184,7 @@ void autonomous(){ // Forward KP = 0.2 KD = 0.1
  flipout(100);
  vexDelay(400);
  
- //skills3();
+ skills5();
  
 }
 
@@ -1337,7 +1445,7 @@ void pre_auton(){
 
 int main() {
   // Set up callbacks for autonomous and driver control periods.
-  Competition.autonomous(skills4);
+  Competition.autonomous(skills3);
   if (Thomas) {
     Competition.drivercontrol(usercontrol);
   } else {
