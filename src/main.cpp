@@ -54,43 +54,152 @@ void DriveBreak(){
 }
 
 
-void visionAlign(vex::vision::signature objSig, double vKP, double vKD) {
+void visionAlignTest(vex::vision::signature objSig, double vKP, double vKD) {
+  // set variables
   double vError = 69420;
   double vDerivative = 0;
   double vPrevError = 0;
   double vMotorPower = 0;
 
-  while (fabs(vError) > 4 || fabs(vDerivative) > 5){
+
+  while (fabs(vError) > 4){  // exit condition, range of error (vision sensor readings fluctuate) and speed (won't have enough power when close)
+    // get data
     Vision1.takeSnapshot(objSig);
-    vError = 158 - Vision1.largestObject.centerX;
-    vDerivative = vError - vPrevError;
-    vMotorPower = vError * vKP + vDerivative * vKD;
-    Controller1.Screen.clearLine();
-    Controller1.Screen.print(Vision1.largestObject.width);
+    // where it want to be - where it is
+    vError = 158 - Vision1.largestObject.centerX; // too far to right = negative, too far to left = positive
 
-    if (Vision1.largestObject.centerX > 158) { // if the target is too much to the left, turn left
-     // LF.spin(forward, vMotorPower, velocityUnits::pct);
-      //LB.spin(forward, vMotorPower, velocityUnits::pct);
-      //RF.spin(reverse, vMotorPower, velocityUnits::pct);
-      //RB.spin(reverse, vMotorPower, velocityUnits::pct);
-      LB.spin(reverse, 20, rpm);
-      RB.spin(forward, 20, rpm);
 
-    } else if (Vision1.largestObject.centerX < 158){ // if the target is too much too much to the right, turn right
-      //LF.spin(forward, -vMotorPower, velocityUnits::pct);
-      //LB.spin(forward, -vMotorPower, velocityUnits::pct);
-      //RF.spin(reverse, -vMotorPower, velocityUnits::pct);
-      //RB.spin(reverse, -vMotorPower, velocityUnits::pct);
-      LB.spin(forward, 20, rpm);
-      LF.spin(forward, 20, rpm);
+    /*----------------------------------------------- Note ----------------------------------------------*/
+    /* experimenting with absolute values may remove the need for if statements or solve future problems */
+    /*----------------------------------------------- END -----------------------------------------------*/
+
+
+    // derivate (if statement so speed does not increase as it gets nearer)
+    if (vError < 0) {
+      vDerivative = vError - vPrevError;
+    } else {
+      vDerivative = vError + vPrevError;
     }
+    
+    // motor power (if statement so it will always go the right way)
+    if (vError < 0) {
+      vMotorPower = vError * vKP - vDerivative * vKD;
+    } else {
+      vMotorPower = vError * vKP + vDerivative * vKD;
+    }
+  
+  if (vError < 0) {
+    LF.spin(forward, 20, percent);
+    LB.spin(forward, 20, percent);
+    RF.spin(forward, 20, percent);
+    RB.spin(forward, 20, percent);
+  }
 
+    // set errors
     vPrevError = vError;
 
-    task::sleep(5);
+    // sleep so there are no wasted resources
+    task::sleep(20);
   }
-  DriveBreak();
+  DriveBreak(); // stop the drivetrain when loop exits
 }
+
+
+
+
+
+void visionAlign(vex::vision::signature objSig, double vKP, double vKD) {
+  // set variables
+  double vError = 69420;
+  double vDerivative = 69420;
+  double vPrevError = 0;
+  double vMotorPower = 0;
+
+
+  while (fabs(vError) > 4 || fabs(vDerivative) > 5){  // exit condition, range of error (vision sensor readings fluctuate) and speed (won't have enough power when close)
+    // get data
+    Vision1.takeSnapshot(objSig);
+    // where it want to be - where it is
+    vError = 158 - Vision1.largestObject.centerX; // too far to right = negative, too far to left = positive
+    // derivate
+    vDerivative = vError - vPrevError;
+    // motor power (if statement so it will always go the right way)
+    vMotorPower = vError * vKP + vDerivative * vKD;
+    
+    // spin the motors, turns different ways cuz its turning
+    LB.spin(forward, vMotorPower, voltageUnits::volt);
+    LF.spin(forward, vMotorPower, voltageUnits::volt);
+    RB.spin(forward, -vMotorPower, voltageUnits::volt);
+    RF.spin(forward, -vMotorPower, voltageUnits::volt);
+
+    // set errors
+    vPrevError = vError;
+
+    // sleep so there are no wasted resources
+    task::sleep(20);
+  }
+  DriveBreak(); // stop the drivetrain when loop exits
+}
+
+
+
+// EXPERIMENTAL!!! DO NOT USE!!!
+void visionAlignDev(vex::vision::signature objSig, double vKP, double vKD) {
+  // set variables
+  double vError = 0;
+  double vDerivative = 0;
+  double vPrevError = 0;
+  double vMotorPower = 0;
+
+
+  while (fabs(vError) > 4 || fabs(vDerivative) > 5){  // exit condition, range of error (vision sensor readings fluctuate) and speed (won't have enough power when close)
+    // get data
+    Vision1.takeSnapshot(objSig);
+    // where it want to be - where it is
+    vError = 158 - Vision1.largestObject.centerX; // too far to right = negative, too far to left = positive
+
+    vDerivative = fabs(vError) - fabs(vPrevError);
+    vMotorPower = fabs(vError) * vKP + fabs(vDerivative) * vKD;
+
+
+    /*----------------------------------------------- Note ----------------------------------------------*/
+    /* experimenting with absolute values may remove the need for if statements or solve future problems */
+    /*----------------------------------------------- END -----------------------------------------------*/
+
+
+    // derivate (if statement so speed does not increase as it gets nearer)
+    if (vError < 0) {
+      vDerivative = vError - vPrevError;
+    } else {
+      vDerivative = vError + vPrevError;
+    }
+    
+    // motor power (if statement so it will always go the right way)
+    if (vError < 0) {
+      vMotorPower = vError * vKP - vDerivative * vKD;
+    } else {
+      vMotorPower = vError * vKP + vDerivative * vKD;
+    }
+  
+
+    // spin the motors, turns different ways cuz its turning
+    LB.spin(forward, vMotorPower, velocityUnits::rpm);
+    LF.spin(forward, vMotorPower, velocityUnits::rpm);
+    RB.spin(reverse, vMotorPower, velocityUnits::rpm);
+    RF.spin(reverse, vMotorPower, velocityUnits::rpm);
+
+    // set errors
+    vPrevError = vError;
+
+    // sleep so there are no wasted resources
+    task::sleep(20);
+  }
+  DriveBreak(); // stop the drivetrain when loop exits
+}
+
+
+
+
 
 
 void Inertial_reset(){
@@ -203,16 +312,14 @@ void ForwardIntakePD(double goal, float KP,float KI,float KD){
   double prevError = 0; 
   //Derivative//
   double derivative;
-  double totalerror;
   //lateral motor power//
   double lateralmotorpower;
 
   while (error > 3) {
       error = goal - avgEnc();
       derivative = error - prevError;
-      totalerror += error;
 
-      lateralmotorpower = (error * KP + totalerror * KI + derivative * KD);
+      lateralmotorpower = (error * KP + derivative * KD);
     
       IntakeR.spin(directionType::rev, 140, vex::velocityUnits::pct);
       IntakeL.spin(directionType::rev, 140, vex::velocityUnits::pct);
@@ -290,16 +397,14 @@ void ForwardWeirdIntakePD(double goal, float KP,float KI,float KD){
   double prevError = 0; 
   //Derivative//
   double derivative;
-  double totalerror;
   //lateral motor power//
   double lateralmotorpower;
 
   while (error > 3){
     error = goal - avgEnc();
     derivative = error - prevError;
-    totalerror += error;
 
-    lateralmotorpower = (error * KP + totalerror * KI + derivative * KD);
+    lateralmotorpower = (error * KP + derivative * KD);
 
     BottomIndexer.spin(directionType::rev, 60, vex::velocityUnits::pct);
     TopIndexer.spin(directionType::rev, 40, vex::velocityUnits::pct);
@@ -334,16 +439,14 @@ void ForwardWeirdIntakePD2(double goal, float KP,float KI,float KD){
   double prevError = 0; 
   //Derivative//
   double derivative;
-  double totalerror;
   //lateral motor power//
   double lateralmotorpower;
 
   while (error > 3){
     error = goal - avgEnc();
     derivative = error - prevError;
-    totalerror += error;
 
-    lateralmotorpower = (error * KP + totalerror * KI + derivative * KD);
+    lateralmotorpower = (error * KP + derivative * KD);
 
     BottomIndexer.spin(directionType::rev, 60, vex::velocityUnits::pct);
     TopIndexer.spin(directionType::rev, 40, vex::velocityUnits::pct);
@@ -1177,10 +1280,7 @@ void skills4(){
   BackwardPD(200, 0.3, 0.1);
 }
 void test(){
-  shoot(300);
-  stopball();
-  BackwardPD(500,0.3,0.1);
-  stopshoot();
+  visionAlign(RED_BALL, 1, 1);
 }
 
 void autonomous(){ // Forward KP = 0.2 KD = 0.1
@@ -1189,7 +1289,7 @@ void autonomous(){ // Forward KP = 0.2 KD = 0.1
  //vexDelay(400);
  visionAlign(RED_BALL, 0.3, 0.1);
  
- skills5();
+ //skills5();
  
 }
 
@@ -1450,7 +1550,7 @@ void pre_auton(){
 
 int main() {
   // Set up callbacks for autonomous and driver control periods.
-  Competition.autonomous(skills3);
+  Competition.autonomous(autonomous);
   if (Thomas) {
     Competition.drivercontrol(usercontrol);
   } else {
