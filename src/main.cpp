@@ -1287,7 +1287,7 @@ void autonomous(){ // Forward KP = 0.2 KD = 0.1
 
  //flipout(100);
  //vexDelay(400);
- visionAlign(RED_BALL, 0.3, 0.1);
+ visionAlign(RED_BALL, 0.09, 0.09);
  
  //skills5();
  
