@@ -114,23 +114,32 @@ void visionAlign(vex::vision::signature objSig, double vKP, double vKD) {
   double vDerivative = 69420;
   double vPrevError = 0;
   double vMotorPower = 0;
+  Vision1.takeSnapshot(objSig);
 
 
-  while (fabs(vError) > 4 || fabs(vDerivative) > 5){  // exit condition, range of error (vision sensor readings fluctuate) and speed (won't have enough power when close)
+  while (fabs(vError) > 2){  // exit condition, range of error (vision sensor readings fluctuate) and speed (won't have enough power when close)
     // get data
     Vision1.takeSnapshot(objSig);
     // where it want to be - where it is
-    vError = 158 - Vision1.largestObject.centerX; // too far to right = negative, too far to left = positive
+    vError = 154 - Vision1.largestObject.centerX; // too far to right = negative, too far to left = positive
     // derivate
     vDerivative = vError - vPrevError;
     // motor power (if statement so it will always go the right way)
     vMotorPower = vError * vKP + vDerivative * vKD;
     
     // spin the motors, turns different ways cuz its turning
-    LB.spin(forward, vMotorPower, voltageUnits::volt);
-    LF.spin(forward, vMotorPower, voltageUnits::volt);
-    RB.spin(forward, -vMotorPower, voltageUnits::volt);
-    RF.spin(forward, -vMotorPower, voltageUnits::volt);
+
+    if(vError > 0) {
+      LB.spin(reverse, 15, percent);
+      LF.spin(reverse, 15, percent);
+      RB.spin(forward, 15, percent);
+      RF.spin(forward, 15, percent);
+    } else {
+      LB.spin(forward, 15, percent);
+      LF.spin(forward, 15, percent);
+      RB.spin(reverse, 15, percent);
+      RF.spin(reverse, 15, percent);
+    }
 
     // set errors
     vPrevError = vError;
@@ -1287,6 +1296,7 @@ void autonomous(){ // Forward KP = 0.2 KD = 0.1
 
  //flipout(100);
  //vexDelay(400);
+ vexDelay(2000);
  visionAlign(RED_BALL, 0.09, 0.09);
  
  //skills5();
