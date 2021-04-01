@@ -1295,18 +1295,17 @@ void LRT1(){
 ForwardIntakePD(390, 0.3, 0, 0.2);
 TurnLeftPD(30, 0.9, 0.2);
 ForwardIntakePD(200, 0.4, 0, 0.2);
-vexDelay(180);
-shoot(1150);
+forwardintakestop();
+shoot(700);
 forwardintakestop();
 BackwardPD(2370, 0.4, 0.1);
 TurnLeftPD(60, 1, 0.1);
-ForwardIntakePD(680, 0.34, 0, 0.2);
-vexDelay(300);
+ForwardPD(680, 0.34, 0, 0.2);
 shoot(800);
 BackwardPD(1600,0.4,0.2);
 TurnLeftPD(40,0.9,0.2);
 ForwardIntakePD(3000,0.8,0,0.2);
-vexDelay(200);
+forwardintakestop();
 shoot(1200);
 
 
