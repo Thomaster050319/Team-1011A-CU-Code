@@ -1291,13 +1291,35 @@ void skills4(){
 void test(){
   visionAlign(RED_BALL, 1, 1);
 }
+void LRT1(){
+ForwardIntakePD(390, 0.3, 0, 0.2);
+TurnLeftPD(30, 0.9, 0.2);
+ForwardIntakePD(200, 0.4, 0, 0.2);
+vexDelay(180);
+shoot(1150);
+forwardintakestop();
+BackwardPD(2350, 0.35, 0.1);
+TurnLeftPD(60, 1, 0.1);
+ForwardIntakePD(900, 0.34, 0, 0.2);
+vexDelay(300);
+shoot(800);
+BackwardPD(2000,0.4,0.2);
+TurnLeftPD(45,0.9,0.2);
+ForwardIntakePD(3000,0.5,0,0.2);
+vexDelay(200);
+shoot(1200);
+
+
+
+}
 
 void autonomous(){ // Forward KP = 0.2 KD = 0.1
 
- //flipout(100);
- //vexDelay(400);
- vexDelay(2000);
- visionAlign(RED_BALL, 0.09, 0.09);
+ flipout(200);
+ vexDelay(1000);
+ LRT1();
+ //vexDelay(2000);
+ //visionAlign(RED_BALL, 0.09, 0.09);
  
  //skills5();
  
