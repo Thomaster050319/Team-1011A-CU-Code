@@ -659,6 +659,31 @@ void BackwardOPD(double goal, float KP, float KD){
   }
   DriveBreak();
 }
+void BackwardIPD(double goal, float KP, float KD){
+  resetEnc();
+  double error = goal - avgEnc();
+  double prevError = 0; 
+  double derivative;
+  double lateralmotorpower;
+
+  while(error > 3) { 
+    error = goal - avgEnc();
+    derivative = error - prevError;
+    lateralmotorpower = (error * KP + derivative * KD);
+    IntakeR.spin(directionType::rev, 140, vex::velocityUnits::pct);
+    IntakeL.spin(directionType::rev, 140, vex::velocityUnits::pct);
+    BottomIndexer.spin(directionType::rev, 60, vex::velocityUnits::pct);
+    LB.spin(reverse,lateralmotorpower,pct);
+    LF.spin(reverse,lateralmotorpower,pct);
+    RB.spin(reverse,lateralmotorpower,pct);
+    RF.spin(reverse,lateralmotorpower,pct);
+
+    prevError = error;
+      task::sleep(10);
+
+  }
+  DriveBreak();
+}
 
 void TurnLeft(double degree, float kP) {
     Inertial_reset();
@@ -1296,14 +1321,14 @@ ForwardIntakePD(390, 0.3, 0, 0.2);
 TurnLeftPD(30, 0.9, 0.2);
 ForwardIntakePD(200, 0.4, 0, 0.2);
 forwardintakestop();
-shoot(700);
+shoot(400);
 forwardintakestop();
-BackwardPD(2370, 0.4, 0.1);
+BackwardIPD(2370, 0.4, 0.1);
 TurnLeftPD(60, 1, 0.1);
-ForwardPD(680, 0.34, 0, 0.2);
+ForwardPD(880, 0.34, 0, 0.2);
 shoot(800);
 BackwardPD(1600,0.4,0.2);
-TurnLeftPD(40,0.9,0.2);
+TurnLeftPD(52,0.9,0.2);
 ForwardIntakePD(3000,0.8,0,0.2);
 forwardintakestop();
 shoot(1200);
