@@ -22,6 +22,7 @@ extern motor BottomIndexer;
 ///Sensors Config///
 extern inertial inertial1;
 extern inertial inertial2;
+extern accelerometer accelY;
 
 //Controller Config//
 extern controller Controller1;

@@ -39,6 +39,14 @@ int avgEnc(){
   return(fabs((LF.position(deg) + LB.position(deg) + RF.position(deg) + RB.position(deg))) / 4);
 }
 
+bool hitDetected() {
+  if (inertial1.acceleration(yaxis) < 0 || inertial2.acceleration(yaxis) < 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 void resetEnc(){
   LB.resetPosition();
   LF.resetPosition();
@@ -108,7 +116,7 @@ void visionAlignTest(vex::vision::signature objSig, double vKP, double vKD) {
 
 
 
-void visionAlign(vex::vision::signature objSig, double vKP, double vKD) {
+void visionAlign2(vex::vision::signature objSig, double vKP, double vKD) {
   // set variables
   double vError = 69420;
   double vDerivative = 69420;
@@ -149,6 +157,8 @@ void visionAlign(vex::vision::signature objSig, double vKP, double vKD) {
   }
   DriveBreak(); // stop the drivetrain when loop exits
 }
+
+
 
 
 
@@ -316,7 +326,7 @@ void ForwardIntakePD(double goal, float KP,float KI,float KD){
   
   resetEnc(); // resets the Enc 
   //Error// 
-  double error = goal - avgEnc();
+  double error = 69420;
   //Previous Error//
   double prevError = 0; 
   //Derivative//
@@ -361,8 +371,8 @@ void DriftPD(double goal, float KP,float KI,float KD){
 
   int hitCount = 0;
 
-  while (error > 3){
-    if (Inertial1_acceleration() < 0 || Inertial2_acceleration() < 0 ) {
+  while (fabs(error) > 1){
+    if (hitDetected()) {
       hitCount++;
       if(hitCount == 2) {
         error = 0;
@@ -497,7 +507,7 @@ void ForwardOutakePD(double goal, float KP,float KI,float KD){
   double lateralmotorpower;
 
   while (error > 3){
-    if (Inertial1_acceleration() < 0 || Inertial2_acceleration() < 0) {
+    if (hitDetected()) {
       vexDelay(50);
       resetEnc();
       error = 0;
@@ -542,7 +552,7 @@ void ForwardPD(double goal, float KP,float KI,float KD){
   double lateralmotorpower;
 
   while (error > 3){
-    if (Inertial1_acceleration() < 0 || Inertial2_acceleration() < 0) {
+    if (inertial1.acceleration(yaxis) < 0 || inertial2.acceleration(yaxis) < 0) {
       vexDelay(50);
       resetEnc();
       error = 0;
@@ -606,7 +616,7 @@ void BackwardAlignPD(double goal, float KP, float KD){
   double lateralmotorpower;
 
   while(error > 3) { 
-    if (Inertial1_acceleration() > 0 || Inertial2_acceleration() > 0) {
+    if (hitDetected()) {
       vexDelay(150);
       resetEnc();
       error = 0;
@@ -690,7 +700,7 @@ void TurnLeft(double degree, float kP) {
   
     double error = (inertial1.rotation()- degree);
 
-    int range = 4;
+    int range = 0;
     while (fabs(error) > range) {
       error = (fabs(inertial1.rotation()- (degree)));
       //spin leftMotor reverse by error * kP;
@@ -709,7 +719,7 @@ void TurnRight(double degree, float kP) {
   
     double error = (Inertail_rotation()- degree);
 
-    int range = 4;
+    int range = 0;
     while (fabs(error) > range) {
       error = (fabs(Inertail_rotation()- (degree)));
       //spin leftMotor reverse by error * kP;
@@ -731,7 +741,7 @@ void TurnRightPD(double degree, float kP,float kD) {
     double prevError = 0;
     double TurnPower;
 
-    int range = 5;
+    int range = 1;
     while (fabs(error) > range) {
       error = (fabs(Inertail_rotation()- (degree)));
       derivative = error - prevError;
@@ -748,6 +758,7 @@ void TurnRightPD(double degree, float kP,float kD) {
     DriveBreak();
    
 }
+
 void TurnLeftPD(double degree, float kP,float kD) {
     Inertial_reset();
   
@@ -773,6 +784,7 @@ void TurnLeftPD(double degree, float kP,float kD) {
     DriveBreak();
    
 }
+
 void shoot(int time) {
   TopIndexer.spin(directionType::fwd, 140, vex::velocityUnits::pct);
   BottomIndexer.spin(directionType::rev, 140, vex::velocityUnits::pct);
@@ -829,6 +841,30 @@ void descore(int time){
     IntakeL.stop();
     BottomIndexer.stop();
 }
+
+void visionAlign(vex::vision::signature objSig) {
+  // set variables
+  vexDelay(5000);
+  Vision1.takeSnapshot(objSig);
+  double vError = 158 - Vision1.largestObject.centerX; // too far to right = negative, too far to left = positive
+
+
+  if (fabs(vError) > 2){  // exit condition, range of error (vision sensor readings fluctuate) and speed (won't have enough power when close)
+
+    // where it want to be - where it is
+    vError = 158 - Vision1.largestObject.centerX; // too far to right = negative, too far to left = positive
+
+    if(vError < 0) {
+      TurnRightPD(fabs(vError)/6, 1, 0.1);
+    } else {
+      TurnLeftPD(fabs(vError)/6, 1, 0.1);
+    }
+
+  }
+  DriveBreak(); // stop the drivetrain when its done
+}
+
+
 void skills1(){ // Left = - Right = +
 //////////1st row ///////////
   ForwardIntakePD(1000,0.25,0,0.1);
@@ -998,7 +1034,7 @@ void skills2(){
 void skills3(){
   ForwardIntakePD(960,0.27,0,0.5);
   vexDelay(150);
-  autoFunctions.autoTurnToL(135);
+  TurnLeftPD(136, 0.9, 0.1);
   forwardintakestop();
   vexDelay(100);
   ForwardPD(1150,0.4,0,0.3);
@@ -1008,6 +1044,7 @@ void skills3(){
   BackwardPD(700,0.25,0.1);
   vexDelay(100);
   TurnRightPD(135,0.9,0.1);
+  visionAlign(RED_BALL);
   vexDelay(100);
   ForwardIntakePD(1690,0.25,0,0.3); //was 1650
   forwardintakestop();
@@ -1019,6 +1056,7 @@ void skills3(){
   BackwardPD(400,0.25,0.1);//changed from 600 (1st wall drift)
   forwardintakestop();
   TurnRightPD(65,0.7,0.1);
+  visionAlign(RED_BALL);
   vexDelay(200);
   ForwardIntakePD(2210,0.27,0,0.1);
   forwardintakestop();
@@ -1034,6 +1072,7 @@ void skills3(){
   shoot(300);
   vexDelay(100);
   TurnRightPD(103,0.7,0.1); //3rd to 4th angle 
+  visionAlign(RED_BALL);
   ForwardIntakePD(2090,0.30,0,0.1);//3rd to 4th transition
   forwardintakestop();
   TurnLeftPD(85,0.9,0.1);
@@ -1044,6 +1083,7 @@ void skills3(){
   BackwardPD(340,0.3,0.1);
   vexDelay(400);
   TurnRightPD(93,0.8,0.1); // change from 93 to 92
+  visionAlign(RED_BALL);
   vexDelay(150);
   ForwardIntakePD(1870,0.3,0,0.1);//4th to 5th
   forwardintakestop();
@@ -1054,6 +1094,7 @@ void skills3(){
   BackwardPD(710,0.3,0.1);//changed from 650
   vexDelay(200);
   TurnRightPD(141, 0.8, 0.3);// turn from 5th to 6th
+  visionAlign(RED_BALL);
   ForwardIntakePD(1580, 0.27, 0, 0.1);//1580
   forwardintakestop();
   TurnLeftPD(92,0.9,0.1);
@@ -1062,6 +1103,7 @@ void skills3(){
   shoot(600);
   BackwardPD(355,0.3,0.1);
   TurnRightPD(64,0.8,0.1);
+  visionAlign(RED_BALL);
   ForwardIntakePD(2225, 0.3, 0, 0.1);
   forwardintakestop();
   insuck(400);
@@ -1083,6 +1125,7 @@ void skills3(){
   TopIndexer.stop();
   BottomIndexer.stop(); 
   TurnLeftPD(180,0.8,0.1); //changed from 182
+  visionAlign(RED_BALL);
   ForwardIntakePD(1000, 0.35, 0, 0.01);
   
   
@@ -1313,9 +1356,7 @@ void skills4(){
   shoot(590);
   BackwardPD(200, 0.3, 0.1);
 }
-void test(){
-  visionAlign(RED_BALL, 1, 1);
-}
+
 void LRT1(){
 ForwardIntakePD(390, 0.3, 0, 0.2);
 TurnLeftPD(30, 0.9, 0.2);
@@ -1339,15 +1380,13 @@ shoot(1200);
 
 void autonomous(){ // Forward KP = 0.2 KD = 0.1
 
- flipout(200);
- vexDelay(1000);
- LRT1();
+ flipout(100);
+ vexDelay(400);
+ skills3();
+ //LRT1();
  //vexDelay(2000);
- //visionAlign(RED_BALL, 0.09, 0.09);
- 
- //skills5();
- 
-}
+} 
+           
 
 void usercontrol(){
 
