@@ -1081,7 +1081,7 @@ void skills6(){
   TurnRightPD(135,0.9,0.1);
   visionAlign(RED_BALL, 11, 4);
   vexDelay(100);
-  ForwardIntakePD(1650,0.25,0,0.3); //was 1650
+  ForwardIntakePD(1620,0.25,0,0.3); //was 1650
   forwardintakestop();
   TurnLeftPD(93,0.9,0.1);
   ForwardPD(2000,0.3,0,0.1); //2nd goal forward (2000 to gauruntee touching)
@@ -1099,7 +1099,7 @@ void skills6(){
   shoot(800); // 3rd goal
   vexDelay(150);
   ///////// 2nd row
-  BackwardOPD(340,0.3,0.1);
+  BackwardOPD(355,0.3,0.1);
   vexDelay(100);
   forwardintakestop();
   vexDelay(100);
@@ -1114,7 +1114,7 @@ void skills6(){
   //shoot(500);// 4th goal shoot
   cycleM(800);
   vexDelay(100);
-  BackwardOPD(340,0.3,0.1);
+  BackwardOPD(325,0.3,0.1);
   vexDelay(400);
   TurnRightPD(92.5,0.8,0.1); // change from 93 to 92
   //visionAlign(RED_BALL);
@@ -1122,16 +1122,16 @@ void skills6(){
   ForwardIntakePD(1730,0.3,0,0.1);//4th to 5th
   forwardintakestop();
   TurnLeftPD(46,0.8,0.1);
-  ForwardPD(1000,0.3,0,0.1); //was 590
+  ForwardPD(900,0.3,0,0.1); //was 590
   //insuck(200);
   //shoot(600);
   cycleC(1000, 500);
   BackwardOPD(670,0.3,0.1);//changed from 650
   vexDelay(200);
   TurnRightPD(138, 0.8, 0.3);// turn from 5th to 6th
-  vexDelay(100);
+  vexDelay(150);
   visionAlign(RED_BALL, 6, 6);
-  vexDelay(100);
+  vexDelay(150);
   ForwardIntakePD(1590, 0.27, 0, 0.1);//1580
   forwardintakestop();
   TurnLeftPD(92,0.9,0.1);
@@ -1149,8 +1149,9 @@ void skills6(){
   BackwardOPD(350,0.3,0.1);
   TurnRightPD(120,0.9,0.1);
   BackwardAlignPD(350,0.6,0.3);
-  ForwardIntakePD(2280,0.5,0,0.1);
+  ForwardIntakePD(2240,0.45,0,0.1);
   forwardintakestop();
+  vexDelay(50);
   TurnLeftPD(90,0.9,0.1);
   ForwardPD(300,0.3,0,0.1);
   //insuck(400);
