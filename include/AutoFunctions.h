@@ -128,4 +128,3 @@ public:
   void alignTurnLeft(double speed, double degrees); // Turn left into corner goal until param degrees is reached
   void flipout(); // Run hood flipout
 };
-

@@ -21,7 +21,7 @@ motor BottomIndexer = motor(PORT1, ratio6_1, false); // 1
 //𝕾𝖊𝖓𝖘𝖔𝖗𝖘 𝕮𝖔𝖓𝖋𝖎𝖌//
 inertial inertial1 = inertial(PORT11); // 11
 inertial inertial2 = inertial(PORT3); // 3
-accelerometer accelY = accelerometer(Brain.ThreeWirePort.E); // E
+accelerometer accelY = accelerometer(Brain.ThreeWirePort.E); //E
 
 limit limit1 = limit(Brain.ThreeWirePort.D); // D
 

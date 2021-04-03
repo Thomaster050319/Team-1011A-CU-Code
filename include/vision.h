@@ -7,5 +7,5 @@ vex::vision::signature PURE_RED = vex::vision::signature (4, 0, 0, 0, 0, 0, 0, 2
 vex::vision::signature SIG_5 = vex::vision::signature (5, 0, 0, 0, 0, 0, 0, 2.5, 0);
 vex::vision::signature SIG_6 = vex::vision::signature (6, 0, 0, 0, 0, 0, 0, 2.5, 0);
 vex::vision::signature SIG_7= vex::vision::signature (7, 0, 0, 0, 0, 0, 0, 2.5, 0);
-vex::vision Vision1 = vex::vision (vex::PORT16, 50, RED_BALL, BLUE_BALL, GOAL, PURE_RED, SIG_5, SIG_6, SIG_7);
+vex::vision Vision1 = vex::vision (vex::PORT17, 50, RED_BALL, BLUE_BALL, GOAL, PURE_RED, SIG_5, SIG_6, SIG_7);
 /*vex-vision-config:end*/
