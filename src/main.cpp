@@ -725,9 +725,9 @@ void visionAlign(vex::vision::signature objSig, double lDivide, double rDivide) 
     vError = 158 - Vision1.largestObject.centerX; // too far to right = negative, too far to left = positive
 
     if(vError < 0) {
-      VisionTurnRightPD(fabs(vError)/12, 2, 0.3); // 12
+      VisionTurnRightPD(fabs(vError)/lDivide, 2, 0.3); // 
     } else {
-      VisionTurnLeftPD(fabs(vError)/5.2, 2, 0.3); // 5.2
+      VisionTurnLeftPD(fabs(vError)/rDivide, 2, 0.3); // 5.2
     }
 
   }
@@ -767,172 +767,7 @@ IntakeL.stop();
 IntakeR.stop();
 }
 
-void skills1(){ // Left = - Right = +
-//////////1st row ///////////
-  ForwardIntakePD(1000,0.25,0,0.1);
-  vexDelay(250);
-  TurnLeftPD(138,0.8,0.1);
-  forwardintakestop();
-  vexDelay(300);
-  ForwardPD(1100,0.25,0,0.1);
-  shoot(300); // 1st goal 
-  //stopball();
-  vexDelay(300);
-  BackwardPD(590,0.2,0.1);
-  //stopshoot();
-  vexDelay(400);
-  TurnRightPD(138,0.9,0.1);
-  vexDelay(400);
-  ForwardIntakePD(1650,0.25,0,0.1);
-  forwardintakestop();
-  TurnLeftPD(90,0.7,0.1);
-  ForwardPD(335,0.2,0,0.1);
-  shoot(400); // 2nd goal
-  //stopball();
-  vexDelay(300);
-  BackwardPD(275,0.2,0.1);
-  //stopshoot();
-  TurnRightPD(90, 0.7, 0.1);
-  ForwardPD(1700, 0.3, 0, 0.1);
-  TurnLeftPD(45,0.7,0.1);
-  vexDelay(200);
-  ForwardPD(380,0.25,0,0.1);
-  shoot(400); // 3rd goal
-  vexDelay(150);
-  ///////// 2nd row /////////
-  BackwardPD(380,0.3,0.1);
-  TurnRightPD(135,0.7,0.1);
-  ForwardIntakePD(2075,0.30,0,0.1);
-  forwardintakestop();
-  TurnLeftPD(90,0.9,0.1);
-  ForwardPD(335,0.3,0,0.1);
-  shoot(400); // 4th goal
-  vexDelay(100);
-  BackwardPD(290,0.3,0.1);
 
-  TurnRightPD(94,0.8,0.1);
-  vexDelay(100);
-  ForwardIntakePD(1700,0.3,0,0.1);
-  forwardintakestop();
-  TurnLeftPD(45,0.8,0.1);
-  ForwardPD(580,0.3,0,0.1);
-  shoot(400);
-  BackwardPD(580, 0.3, 0.1);
-  /*///////// 3rd row /////////
-  TurnRightPD(161, 0.8, 0.1);
-  ForwardIntakePD(1700, 0.3, 0, 0.1); 
-  forwardintakestop();
-  TurnLeftPD(19,0.8,0.1);
-  ForwardIntakePD(1480, 0.3, 0, 0.1);
-  shoot(400);
-  vexDelay(150);
-  BackwardPD(630, 0.3, 0.1);
-  TurnRightPD(90,0.8,0.1);
-  ForwardPD(1700,0.3,0,0.1);
-  TurnLeftPD(45,0.8,0.1);
-  ForwardPD(500,0.3,0,0.1);
-  shoot(400);
-  vexDelay(150);
-  BackwardPD(500, 0.3, 0.1);
-  TurnRightPD(135,0.8,0.1);
-  ///////// 4th row /////////
-  ForwardIntakePD(1700,0.3,0,0.1);
-  TurnLeftPD(90,0.8,0.1);
-  shoot(400);
-  vexDelay(150);
-  TurnRightPD(180, 0.8, 0.1);
-  ///////// Middle Goal /////////
-  ForwardIntakePD(1500,0.3,0,0.1);
-  ForwardIntakePD(100,0.3,0,0.1);
-  BackwardPD(100,0.3,0.1);
-  ForwardIntakePD(150, 0.3,0, 0.1);
-  shoot(400);
-  BackwardPD(200, 0.3, 0.1);*/
-
-  
-
-
-
-
-
-
-}
-void skills2(){
-  ForwardIntakePD(1000,0.27,0,0.1);
-  vexDelay(100);
-  TurnLeftPD(138,0.6,0.1);
-  forwardintakestop();
-  vexDelay(200);
-  ForwardPD(1150,0.4,0,0.1);
-  shoot(350);
-  vexDelay(150);
-  BackwardPD(550,0.25,0.1);
-  vexDelay(200);
-  TurnRightPD(138,0.9,0.1);
-  vexDelay(200);
-  ForwardIntakePD(1660,0.25,0,0.1);
-  forwardintakestop();
-  TurnLeftPD(92,0.7,0.1);
-  ForwardPD(360,0.2,0,0.1); //2nd goal forward
-  shoot(300);
-  vexDelay(200);
-  BackwardPD(750,0.25,0.1);
-  TurnRightPD(63,0.7,0.1);
-  vexDelay(200);
-  ForwardPD(2200,0.27,0,0.1);
-  shoot(400); // 3rd goal
-  vexDelay(150);
-  ///////// 2nd row /////////
-  BackwardPD(400,0.3,0.1);
-  TurnRightPD(110,0.7,0.1); //3rd to 4th angle 
-  ForwardIntakePD(1900,0.30,0,0.1);//3rd to 4th transition
-  forwardintakestop();
-  TurnLeftPD(90,0.9,0.1);
-  ForwardPD(335,0.3,0,0.1); //4th goal forward
-  shoot(400);
-  vexDelay(100);
-  BackwardPD(290,0.3,0.1);
-  TurnRightPD(92,0.8,0.1);
-  vexDelay(100);
-  ForwardIntakePD(1700,0.3,0,0.1);
-  forwardintakestop();
-  TurnLeftPD(45,0.8,0.1);
-  ForwardPD(550,0.3,0,0.1);
-  shoot(400);
-  /*vexDelay(150);
-  BackwardPD(550,0.3,0.1);
-  ///////// 3rd row /////////
-  TurnRightPD(161, 0.8, 0.1);
-  ForwardIntakePD(1900, 0.3, 0, 0.1); 
-  forwardintakestop();
-  TurnLeftPD(19,0.8,0.1);
-  ForwardIntakePD(1480, 0.3, 0, 0.1);
-  shoot(400);
-  vexDelay(150);
-  BackwardPD(630, 0.3, 0.1);
-  TurnRightPD(90,0.8,0.1);
-  ForwardPD(1700,0.3,0,0.1);
-  TurnLeftPD(45,0.8,0.1);
-  ForwardPD(500,0.3,0,0.1);
-  shoot(400);
-  vexDelay(150);
-  BackwardPD(500, 0.3, 0.1);
-  TurnRightPD(135,0.8,0.1);
-  ///////// 4th row /////////
-  ForwardIntakePD(1700,0.3,0,0.1);
-  TurnLeftPD(90,0.8,0.1);
-  shoot(400);
-  vexDelay(150);
-  TurnRightPD(180, 0.8, 0.1);
-  ///////// Middle Goal /////////
-  ForwardIntakePD(1500,0.3,0,0.1);
-  ForwardIntakePD(100,0.3,0,0.1);
-  BackwardPD(100,0.3,0.1);
-  ForwardIntakePD(150, 0.3,0, 0.1);
-  shoot(400);
-  BackwardPD(200, 0.3, 0.1);*/
-  
-}
 void skills3(){
   BackwardAlignPD(300, 0.7, 0.7);
   vexDelay(50);
@@ -951,9 +786,8 @@ void skills3(){
   BackwardOPD(605,0.25,0.35);
   vexDelay(100);
   TurnRightPD(125,0.9,0.1);
-  vexDelay(100);
+  vexDelay(250);
   visionAlign(RED_BALL, 11, 4);
-  vexDelay(150);
   ForwardIntakePD(1750,0.25,0,0.3); //was 1650
   forwardintakestop();
   TurnLeftPD(90,0.9,0.1);
@@ -973,14 +807,14 @@ void skills3(){
   //insuck(200);
   //shoot(600); // 3rd goal
   //cycleC(1000, 600);
-  shoot(1000);
+  shoot(500);
   vexDelay(150);
   ///////// 2nd row /////////
   BackwardOPD(340,0.3,0.1);
   vexDelay(100);
   forwardintakestop();
   vexDelay(100);
-  TurnRightPD(103,0.7,0.1); //3rd to 4th angle 
+  TurnRightPD(100 ,0.7,0.1); //3rd to 4th angle 
   //visionAlign(RED_BALL);
   ForwardIntakePD(2100,0.30,0,0.1);//3rd to 4th transition
   forwardintakestop();
@@ -992,7 +826,7 @@ void skills3(){
   vexDelay(100);
   BackwardOPD(320,0.3,0.1);
   vexDelay(300);
-  TurnRightPD(95,0.8,0.1); // change from 93 to 92
+  TurnRightPD(93,0.8,0.1); // change from 93 to 92
   //visionAlign(RED_BALL);
   //vexDelay(150);
   ForwardIntakePD(1750,0.3,0,0.1);//4th to 5th
@@ -1005,13 +839,12 @@ void skills3(){
   BackwardOPD(670,0.3,0.1);//changed from 650
   vexDelay(200);
   TurnRightPD(138, 0.8, 0.3);// turn from 5th to 6th
-  vexDelay(100);
+  vexDelay(200);
   visionAlign(RED_BALL, 12, 5.2);
-  vexDelay(100);
   ForwardIntakePD(1590, 0.27, 0, 0.1);//1580
   forwardintakestop();
   TurnLeftPD(92,0.9,0.1);
-  ForwardPD(2000,0.3,0,0.1); // was 390
+  ForwardPD(1000,0.3,0,0.1); // was 390
   //insuck(200);
   //shoot(600);
   cycleM(1000);
@@ -1077,26 +910,26 @@ void skills6(){
   cycleC(1000,500);
   vexDelay(100);
   BackwardOPD(700,0.25,0.1);
-  vexDelay(100);
+  vexDelay(200);
   TurnRightPD(135,0.9,0.1);
-  visionAlign(RED_BALL, 11, 4);
-  vexDelay(100);
+  vexDelay(200);
+  visionAlign(RED_BALL, 6, 11);
   ForwardIntakePD(1620,0.25,0,0.3); //was 1650
   forwardintakestop();
   TurnLeftPD(93,0.9,0.1);
-  ForwardPD(2000,0.3,0,0.1); //2nd goal forward (2000 to gauruntee touching)
+  ForwardPD(1000,0.3,0,0.1); //2nd goal forward (2000 to gauruntee touching)
   insuck(300);
   shoot(400);
   vexDelay(100);
-  BackwardPD(400,0.25,0.1);//changed from 600 (1st wall drift)
+  BackwardPD(400,0.25,0.1);// changed from 600 (1st wall drift)
   forwardintakestop();
-  TurnRightPD(65,0.7,0.1);
-  vexDelay(200);
+  TurnRightPD(67,0.7,0.1);
+  vexDelay(100);
   ForwardIntakePD(2210,0.35,0,0.1);
   forwardintakestop();
   vexDelay(100);
   //insuck(200);
-  shoot(800); // 3rd goal
+  shoot(400); // 3rd goal
   vexDelay(150);
   ///////// 2nd row
   BackwardOPD(355,0.3,0.1);
@@ -1106,39 +939,39 @@ void skills6(){
   TurnRightPD(101,0.7,0.1);
 
   //visionAlign(RED_BALL);
-  ForwardIntakePD(2090,0.30,0,0.1);//3rd to 4th transition
+  ForwardIntakePD(2090,0.30,0,0.1); // 3rd to 4th transition
   forwardintakestop();
   TurnLeftPD(85,0.9,0.1);
-  ForwardPD(2000,0.3,0,0.1); //4th goal forward
+  ForwardPD(1000,0.3,0,0.1); //4th goal forward
   //insuck(200);
-  //shoot(500);// 4th goal shoot
+  //shoot(500); // 4th goal shoot
   cycleM(800);
   vexDelay(100);
   BackwardOPD(325,0.3,0.1);
-  vexDelay(400);
+  vexDelay(100);
   TurnRightPD(92.5,0.8,0.1); // change from 93 to 92
+  vexDelay(200);
+  visionAlign(RED_BALL, 6, 6);
   //visionAlign(RED_BALL);
   //vexDelay(150);
-  ForwardIntakePD(1730,0.3,0,0.1);//4th to 5th
+  ForwardIntakePD(1730,0.3,0,0.1); // 4th to 5th
   forwardintakestop();
   TurnLeftPD(46,0.8,0.1);
-  ForwardPD(900,0.3,0,0.1); //was 590
+  ForwardPD(900,0.3,0,0.1); // was 590
   //insuck(200);
   //shoot(600);
   cycleC(1000, 500);
-  BackwardOPD(670,0.3,0.1);//changed from 650
+  BackwardOPD(670,0.3,0.1); // changed from 650
   vexDelay(200);
-  TurnRightPD(138, 0.8, 0.3);// turn from 5th to 6th
-  vexDelay(150);
+  TurnRightPD(138, 0.8, 0.3); // turn from 5th to 6th
+  vexDelay(300);
   visionAlign(RED_BALL, 6, 6);
-  vexDelay(150);
-  ForwardIntakePD(1590, 0.27, 0, 0.1);//1580
+  ForwardIntakePD(1590, 0.27, 0, 0.1); // 1580
   forwardintakestop();
   TurnLeftPD(92,0.9,0.1);
-  ForwardPD(2000,0.3,0,0.1); // was 390
+  ForwardPD(1000,0.3,0,0.1); // was 390
   //insuck(200);
-  //shoot(600);
-  cycleM(1000);
+  shoot(600);
   BackwardOPD(355,0.3,0.1);
   TurnRightPD(66,0.8,0.1);
   //visionAlign(RED_BALL);
@@ -1165,7 +998,8 @@ void skills6(){
   TopIndexer.stop();
   BottomIndexer.stop(); 
   TurnLeftPD(182,0.8,0.3); //changed from 182
-  //visionAlign(RED_BALL);
+  vexDelay(200);
+  visionAlign(RED_BALL, 6, 6);
   ForwardIntakePD(1000, 0.35, 0, 0.01);
   
   
@@ -1187,226 +1021,7 @@ void skills6(){
 }
 
 
-void skills5(){
-  ForwardIntakePD(935,0.27,0,0.5);
-  vexDelay(150);
-  autoFunctions.autoTurnToL(132);
-  forwardintakestop();
-  vexDelay(100);
-  ForwardPD(1150,0.4,0,0.3);
-  insuck(400);
-  shoot(450);
-  vexDelay(100);
-  BackwardPD(680,0.25,0.1);
-  vexDelay(100);
-  autoFunctions.autoTurnToL(-140);
-  vexDelay(100);
-  ForwardIntakePD(1660,0.25,0,0.3); //was 1650
-  forwardintakestop();
-  autoFunctions.autoTurnToL(93);
-  ForwardPD(2000,0.3,0,0.1); //2nd goal forward (2000 to gauruntee touching)
-  insuck(300);
-  shoot(400);
-  vexDelay(100);
-  BackwardPD(400,0.25,0.1);//changed from 600 (1st wall drift)
-  forwardintakestop();
-  autoFunctions.autoTurnToR(65);
-  vexDelay(200);
-  ForwardIntakePD(2210,0.27,0,0.1);
-  forwardintakestop();
-  vexDelay(100);
-  insuck(200);
-  shoot(600); // 3rd goal
-  vexDelay(150);
-  ///////// 2nd row /////////
-  BackwardOPD(320,0.3,0.1);
-  vexDelay(100);
-  forwardintakestop();
-  vexDelay(250);
-  shoot(300);
-  vexDelay(100);
-  TurnRightPD(108,0.7,0.1); //3rd to 4th angle
-  autoFunctions.autoTurnToR(108);
-  ForwardIntakePD(2120,0.30,0,0.1);//3rd to 4th transition
-  forwardintakestop();
-  TurnLeftPD(85,0.9,0.1);
-  autoFunctions.autoTurnToL(85);
-  ForwardPD(2000,0.3,0,0.1); //4th goal forward
-  insuck(200);
-  shoot(500);// 4th goal shoot
-  vexDelay(100);
-  BackwardPD(340,0.3,0.1);
-  vexDelay(400);
-  autoFunctions.autoTurnToR(92); // change from 93 to 92
-  vexDelay(150);
-  ForwardIntakePD(1870,0.3,0,0.1);//4th to 5th
-  forwardintakestop();
-  autoFunctions.autoTurnToL(46);
-  ForwardPD(1000,0.3,0,0.1); //was 590
-  insuck(200);
-  shoot(600);
-  BackwardPD(710,0.3,0.1);//changed from 650
-  vexDelay(200);
-  TurnRightPD(141, 0.8, 0.3);// turn from 5th to 6th
-  autoFunctions.autoTurnToR(141);
-  ForwardIntakePD(1620, 0.27, 0, 0.1);//1580
-  forwardintakestop();
-  autoFunctions.autoTurnToL(92);
-  ForwardPD(2000,0.3,0,0.1); // was 390
-  insuck(200);
-  shoot(600);
-  BackwardPD(355,0.3,0.1);
-  autoFunctions.autoTurnToR(64);
-  ForwardIntakePD(2225, 0.3, 0, 0.1);
-  forwardintakestop();
-  insuck(400);
-  shoot(540);
-  BackwardOPD(350,0.3,0.1);
-  autoFunctions.autoTurnToR(120);
-  BackwardAlignPD(350,0.6,0.3);
-  ForwardIntakePD(2280,0.35,0,0.1);
-  forwardintakestop();
-  autoFunctions.autoTurnToL(90);
-  ForwardPD(300,0.3,0,0.1);
-  insuck(400);
-  shoot(720);
-  forwardintakestop();
-  descore(1000);
-  BackwardOPD(335, 0.2, 0.1);
-  IntakeL.stop();
-  IntakeR.stop();
-  TopIndexer.stop();
-  BottomIndexer.stop();
-  TurnLeftPD(180,0.9,0.4); 
-  ForwardIntakePD(1000, 0.35, 0, 0.01);
-  
-  
-  TurnLeftPD(10,0.9,0.4);
-  ForwardOutakePD(500,0.25,0,0.1);
-  LF.spin(forward, 10000000, rpm);
-  LB.spin(forward, 10000000, rpm);
-  RB.stop(brake);
-  RF.stop(brake);
-  vexDelay(300);
-  LF.stop(coast);
-  LB.stop(coast);
-  RF.stop(coast);
-  RB.stop(coast);
-  shoot(590);
-  BackwardPD(200, 0.3, 0.1);
-}
-void skills4(){
-  ForwardIntakePD(935,0.27,0,0.5);
-  vexDelay(150);
-  autoFunctions.autoTurnToL(135);
-  forwardintakestop();
-  vexDelay(100);
-  ForwardPD(1150,0.4,0,0.3);
-  insuck(400);
-  shoot(450);
-  vexDelay(100);
-  BackwardPD(730,0.25,0.1);
-  vexDelay(100);
-  autoFunctions.autoTurnToR(135);
-  vexDelay(100);
-  ForwardIntakePD(1690,0.25,0,0.3); //was 1650
-  forwardintakestop();
-  autoFunctions.autoTurnToL(90);
-  ForwardPD(2000,0.3,0,0.1); //2nd goal forward (2000 to gauruntee touching)
-  insuck(300);
-  shoot(400);
-  vexDelay(100);
-  BackwardPD(400,0.25,0.1);//changed from 600 (1st wall drift)
-  forwardintakestop();
-  TurnRightPD(65,0.7,0.1);
-  vexDelay(200);
-  ForwardIntakePD(2210,0.27,0,0.1);
-  forwardintakestop();
-  vexDelay(100);
-  insuck(200);
-  shoot(600); // 3rd goal
-  vexDelay(150);
-  ///////// 2nd row /////////
-  BackwardOPD(380,0.3,0.1);
-  vexDelay(100);
-  forwardintakestop();
-  vexDelay(250);
-  shoot(300);
-  vexDelay(100);
-  TurnRightPD(108,0.7,0.1); //3rd to 4th angle 
-  ForwardIntakePD(2120,0.30,0,0.1);//3rd to 4th transition
-  forwardintakestop();
-  TurnLeftPD(85,0.9,0.1);
-  ForwardPD(2000,0.3,0,0.1); //4th goal forward
-  insuck(200);
-  shoot(500);// 4th goal shoot
-  vexDelay(100);
-  BackwardPD(340,0.3,0.1);
-  vexDelay(400);
-  TurnRightPD(92,0.8,0.1); // change from 93 to 92
-  vexDelay(150);
-  ForwardIntakePD(1870,0.3,0,0.1);//4th to 5th
-  forwardintakestop();
-  TurnLeftPD(46,0.8,0.1);
-  ForwardPD(2000,0.3,0,0.1); //was 590
-  insuck(200);
-  shoot(600);
-  BackwardPD(710,0.3,0.1);//changed from 650
-  vexDelay(200);
-  TurnRightPD(141, 0.8, 0.3);// turn from 5th to 6th
-  ForwardIntakePD(1620, 0.27, 0, 0.1);//1580
-  forwardintakestop();
-  TurnLeftPD(92,0.9,0.1);
-  ForwardPD(2000,0.3,0,0.1); // was 390
-  //insuck(200);
-  //shoot(600);
-  cycleC(500, 600);
-  BackwardOPD(355,0.3,0.3);
-  TurnRightPD(64,0.8,0.1);
-  ForwardIntakePD(2225, 0.3, 0, 0.1);
-  forwardintakestop();
-  insuck(400);
-  shoot(540);
-  BackwardOPD(350,0.3,0.1);
-  TurnRightPD(120,0.9,0.1);
-  BackwardAlignPD(350,0.7,0.3);
-  ForwardIntakePD(2280,0.35,0,0.1);
-  forwardintakestop();
-  TurnLeftPD(90,0.9,0.1);
-  ForwardPD(300,0.3,0,0.1);
-  insuck(400);
-  shoot(720);
-  forwardintakestop();
-  //descore(1000);
-  BackwardOPD(335, 0.2, 0.1);
-  IntakeL.stop();
-  IntakeR.stop();
-  TopIndexer.stop();
-  BottomIndexer.stop(); 
-  TurnLeftPD(182,0.8,0.3); //changed from 182
-  ForwardIntakePD(1000, 0.35, 0, 0.01);
-  
-  
-  TurnLeftPD(10, 0.8, 0.1);
-  ForwardOutakePD(500,0.25,0,0.1);
-  LF.spin(forward, 10000000, rpm);
-  LB.spin(forward, 10000000, rpm);
-  RB.stop(brake);
-  RF.stop(brake);
-  vexDelay(300);
-  LF.stop(coast);
-  LB.stop(coast);
-  RF.stop(coast);
-  RB.stop(coast);
-  shoot(590);
-  BackwardPD(200, 0.3, 0.1);
-}
-void test(){
-  shoot(300);
-  stopball();
-  BackwardPD(500,0.3,0.1);
-  stopshoot();
-}
+
 
 void autonomous(){ // Forward KP = 0.2 KD = 0.1
 
