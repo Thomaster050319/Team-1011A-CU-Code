@@ -501,6 +501,7 @@ void BackwardOPD(double goal, float KP, float KD){
     LF.spin(reverse,lateralmotorpower,pct);
     RB.spin(reverse,lateralmotorpower,pct);
     RF.spin(reverse,lateralmotorpower,pct);
+    
 
     prevError = error;
       task::sleep(10);
@@ -979,7 +980,7 @@ void skills3(){
   vexDelay(100);
   forwardintakestop();
   vexDelay(100);
-  TurnRightPD(100,0.7,0.1); //3rd to 4th angle 
+  TurnRightPD(103,0.7,0.1); //3rd to 4th angle 
   //visionAlign(RED_BALL);
   ForwardIntakePD(2100,0.30,0,0.1);//3rd to 4th transition
   forwardintakestop();
@@ -1097,12 +1098,12 @@ void skills6(){
   //insuck(200);
   shoot(800); // 3rd goal
   vexDelay(150);
-  ///////// 2nd row /////////
+  ///////// 2nd row
   BackwardOPD(340,0.3,0.1);
   vexDelay(100);
   forwardintakestop();
   vexDelay(100);
-  TurnRightPD(100,0.7,0.1);
+  TurnRightPD(101,0.7,0.1);
 
   //visionAlign(RED_BALL);
   ForwardIntakePD(2090,0.30,0,0.1);//3rd to 4th transition
@@ -1129,7 +1130,7 @@ void skills6(){
   vexDelay(200);
   TurnRightPD(138, 0.8, 0.3);// turn from 5th to 6th
   vexDelay(100);
-  visionAlign(RED_BALL, 12, 5.2);
+  visionAlign(RED_BALL, 6, 6);
   vexDelay(100);
   ForwardIntakePD(1590, 0.27, 0, 0.1);//1580
   forwardintakestop();
