@@ -843,21 +843,15 @@ void skills6(){
   cycleC(1000, 500);
   BackwardOPD(670,0.3,0.1); // changed from 650
   vexDelay(200);
-  TurnRightPD(132, 0.8, 0.3); // turn from 5th to 6th
+  TurnRightPD(130, 0.8, 0.3); // turn from 5th to 6th
   vexDelay(100);
-  ForwardIntakePD(1000, 0.27, 0, 0.1);
-  vexDelay(200);
-  //visionAlign(RED_BALL, 6, 6);
-  TurnLeftPD(20, 1, 0.3);
-  ForwardIntakePD(500, 0.27, 0, 0.1); // 1580
-  vexDelay(100);
-  TurnLeftPD(20, 0.27, 0.1);
+  ForwardIntakePD(1600, 0.27, 0, 0.1);
   forwardintakestop();
-  TurnLeftPD(70,0.9,0.1);
+  TurnLeftPD(90, 0.27, 0.1);
   ForwardPD(1000,0.3,0,0.1); // was 390
   //insuck(200);
   downSpin();
-  shoot(600);
+  shoot(700);
   BackwardOPD(355,0.3,0.1);
   TurnRightPD(66,0.8,0.1);
   //visionAlign(RED_BALL);
@@ -865,7 +859,7 @@ void skills6(){
   forwardintakestop();
   insuck(400);
   downSpin();
-  shoot(580);
+  shoot(700);
   BackwardOPD(430,0.3,0.1);
   TurnRightPD(120,0.9,0.1);
   BackwardAlignPD(350,0.6,0.3);
