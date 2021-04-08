@@ -408,7 +408,8 @@ void ForwardPD(double goal, float KP,float KI,float KD){
       totalerror += error;
       
       lateralmotorpower = (error * KP + totalerror * KI + derivative * KD);
-
+      BottomIndexer.spin(directionType::rev, 60, vex::velocityUnits::pct);
+      TopIndexer.spin(directionType::rev, 40, vex::velocityUnits::pct);
       LB.spin(forward,lateralmotorpower,pct);
       LF.spin(forward,lateralmotorpower,pct);
       RB.spin(forward,lateralmotorpower,pct);
@@ -902,26 +903,30 @@ void skills6(){
   
 }
 void LRT_1(){
-ForwardIntakePD(300, 0.2, 0, 0.2);
+ForwardIntakePD(390, 0.27, 0, 0.4);
 forwardintakestop();
-vexDelay(400);
-TurnLeftPD(30, 0.8, 0.2);
-ForwardPD(200, 0.4, 0, 0.2);
-vexDelay(380);
-shoot(700);
 vexDelay(100);
-BackwardPD(2370, 0.4, 0.1);
+TurnLeftPD(30, 0.8, 0.4);
+ForwardPD(200, 0.4, 0, 0.2);
+//vexDelay(380);
+shoot(450);
+vexDelay(75);
+BackwardPD(2480, 0.4, 0.1);
 TurnLeftPD(60, 1, 0.1);
 ForwardPD(1360, 0.34, 0, 0.2);
-shoot(800);
+insuck(100);
+shoot(700);
+vexDelay(25);
 BackwardPD(1600,0.4,0.2);
-ForwardPD(150,0.3,0,0.2);
-vexDelay(200);
-TurnLeftPD(40,0.9,0.2);
-ForwardIntakePD(3000,0.8,0,0.2);
+ForwardPD(100,0.3,0,0.2);
+//vexDelay(100);
+TurnLeftPD(45,0.9,0.5);
+ForwardIntakePD(3000,1.0,0,0.2);
 forwardintakestop();
-shoot(900);
-BackwardPD(200,0.4,0.4);
+insuck(100);
+shoot(500);
+vexDelay(25);
+BackwardPD(200,0.8,0.4);
 }
 
 
