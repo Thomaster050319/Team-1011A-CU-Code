@@ -901,20 +901,40 @@ void skills6(){
   
   
 }
-
+void LRT_1(){
+ForwardIntakePD(390, 0.35, 0, 0.2);
+forwardintakestop();
+TurnLeftPD(30, 0.8, 0.2);
+ForwardPD(200, 0.4, 0, 0.2);
+vexDelay(180);
+shoot(700);
+BackwardPD(2370, 0.4, 0.1);
+TurnLeftPD(60, 1, 0.1);
+ForwardPD(1360, 0.34, 0, 0.2);
+shoot(800);
+BackwardPD(1600,0.4,0.2);
+ForwardPD(150,0.3,0,0.2);
+TurnLeftPD(40,0.9,0.2);
+ForwardIntakePD(3000,0.8,0,0.2);
+forwardintakestop();
+shoot(900);
+BackwardPD(200,0.4,0.4);
+}
 
 
 
 void autonomous(){ // Forward KP = 0.2 KD = 0.1
 
- //flipout(100);
+ flipout(600);
  //vexDelay(400);
  //cycleC(1000,500); // for the corner
  //cycleC(500, 500); // middle but not actual middle goal 
- skills6();
+ //skills6();
  //cycleM(1000);
 // vexDelay(5000);
  //visionAlign(RED_BALL);
+ //LRT_1();
+ TurnRightPD(30, 0.8, 0.2);
  
  
 }
