@@ -902,18 +902,21 @@ void skills6(){
   
 }
 void LRT_1(){
-ForwardIntakePD(390, 0.35, 0, 0.2);
+ForwardIntakePD(300, 0.2, 0, 0.2);
 forwardintakestop();
+vexDelay(400);
 TurnLeftPD(30, 0.8, 0.2);
 ForwardPD(200, 0.4, 0, 0.2);
-vexDelay(180);
+vexDelay(380);
 shoot(700);
+vexDelay(100);
 BackwardPD(2370, 0.4, 0.1);
 TurnLeftPD(60, 1, 0.1);
 ForwardPD(1360, 0.34, 0, 0.2);
 shoot(800);
 BackwardPD(1600,0.4,0.2);
 ForwardPD(150,0.3,0,0.2);
+vexDelay(200);
 TurnLeftPD(40,0.9,0.2);
 ForwardIntakePD(3000,0.8,0,0.2);
 forwardintakestop();
@@ -933,8 +936,8 @@ void autonomous(){ // Forward KP = 0.2 KD = 0.1
  //cycleM(1000);
 // vexDelay(5000);
  //visionAlign(RED_BALL);
- //LRT_1();
- TurnRightPD(30, 0.8, 0.2);
+ LRT_1();
+ //TurnRightPD(30, 0.8, 0.2);
  
  
 }
