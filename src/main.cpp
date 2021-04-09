@@ -154,7 +154,7 @@ void AutoFunctions::autoTurnToL(double degrees) {
 }
 
 
-void ForwardIntakePD(double goal, float KP,float KI,float KD){
+void ForwardIntakePD(double goal, float KP,float KI,float KD){ // revert for skills
   
   resetEnc(); // resets the Enc 
   //Error// 
@@ -167,7 +167,13 @@ void ForwardIntakePD(double goal, float KP,float KI,float KD){
   //lateral motor power//
   double lateralmotorpower;
 
+
+
   while (error > 3) {
+      if (Inertial1_acceleration() < 0 || Inertial2_acceleration() < 0 ) {
+      IntakeL.stop();
+      IntakeR.stop();
+      }
       error = goal - avgEnc();
       derivative = error - prevError;
       totalerror += error;
@@ -614,6 +620,14 @@ void insuck(int time){
   task::sleep(time);
   TopIndexer.stop();
 }
+
+void insuck2(int time){
+  TopIndexer.spin(directionType::rev, 20, vex::velocityUnits::pct);
+  BottomIndexer.spin(directionType::rev, 20, vex::velocityUnits::pct);
+  task::sleep(time);
+  TopIndexer.stop();
+}
+
 void stopball(){
   Brain.Timer.reset(); 
   while(1){
@@ -770,7 +784,8 @@ IntakeR.stop();
 
 void downSpin() {
   BottomIndexer.spin(forward, 140, percent);
-  wait(200, msec);
+  TopIndexer.spin(reverse, 140, percent);
+  wait(135, msec);
   BottomIndexer.stop();
 }
 
@@ -903,28 +918,31 @@ void skills6(){
   
 }
 void LRT_1(){
-ForwardIntakePD(390, 0.27, 0, 0.4);
+ForwardIntakePD(410, 0.3, 0, 0.4);
 forwardintakestop();
 vexDelay(100);
 TurnLeftPD(30, 0.8, 0.4);
 ForwardPD(200, 0.4, 0, 0.2);
-//vexDelay(380);
-shoot(450);
+//vexDelay(380)
+insuck(150);
+downSpin();
+shoot(425);
 vexDelay(75);
-BackwardPD(2480, 0.4, 0.1);
-TurnLeftPD(60, 1, 0.1);
-ForwardPD(1360, 0.34, 0, 0.2);
-insuck(100);
+BackwardPD(2440, 0.45, 0.1);
+TurnLeftPD(80, 1, 0.1);
+ForwardPD(1360, 0.5, 0, 0.2);
+insuck(200);
 shoot(700);
 vexDelay(25);
 BackwardPD(1600,0.4,0.2);
-ForwardPD(100,0.3,0,0.2);
+ForwardPD(60,0.3,0,0.2);
 //vexDelay(100);
-TurnLeftPD(45,0.9,0.5);
-ForwardIntakePD(3000,1.0,0,0.2);
+TurnLeftPD(43,0.9,0.5);
+ForwardIntakePD(2910,1.0,0,0.2);
 forwardintakestop();
-insuck(100);
-shoot(500);
+insuck2(100);
+downSpin();
+shoot(650);
 vexDelay(25);
 BackwardPD(200,0.8,0.4);
 }
