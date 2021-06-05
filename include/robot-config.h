@@ -22,11 +22,19 @@ extern motor BottomIndexer;
 ///Sensors Config///
 extern inertial inertial1;
 extern inertial inertial2;
-extern accelerometer accelY;
+extern inertial inertial3;
+extern distance distanceL;
+extern distance distanceR;
+
+//extern accelerometer accelY;
+extern encoder lTrackingWheel;
+extern encoder rTrackingWheel;
+extern encoder mTrackingWheel;
 
 //Controller Config//
 extern controller Controller1;
-extern limit limit1;
+//extern limit limit1;
+
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  *
