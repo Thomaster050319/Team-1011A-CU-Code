@@ -51,7 +51,7 @@ void autonomous(){ // Forward KP = 0.2 KD = 0.1
  //visionAlign(RED_BALL);
  //inPerson();
  //TurnRightPD(30, 0.8, 0.2);
- worldsWS();
+ worldsW();
  //visionTest();
  
 }
@@ -281,6 +281,22 @@ void usercontrol(){
 
     wait(10, msec); // don't waste resources
   }
+}
+
+
+////////////////////////////////////////////////////
+// autonomous timer
+////////////////////////
+int timeBoi = 0;
+
+int autonTimer() {
+
+  while (Competition.isAutonomous()) {
+    timeBoi++;
+    wait(1000, msec);
+  }
+
+  return 0;
 }
 
 

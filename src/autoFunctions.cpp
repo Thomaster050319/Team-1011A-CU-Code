@@ -469,7 +469,7 @@ void BackwardOPD(double goal, float KP, float KD, double slewMaxChange){
         lateralmotorpower = prevMotorPower + slewMaxChange;
       }
 
-    TopIndexer.spin(directionType::fwd, 1000000000, voltageUnits::volt);
+    TopIndexer.spin(directionType::rev, 1000000000, voltageUnits::volt);
     IntakeR.spin(directionType::rev, 80, vex::velocityUnits::pct);
     IntakeL.spin(directionType::rev, 80, vex::velocityUnits::pct);
     BottomIndexer.spin(directionType::fwd, 60, vex::velocityUnits::pct);
@@ -637,9 +637,11 @@ void stopshoot(){
 // Flipout hood
 ////////////////////////////////////
 void flipout(int time){
-  TopIndexer.spin(directionType::fwd, 140, vex::velocityUnits::pct);
+  TopIndexer.spin(directionType::rev, 140, vex::velocityUnits::pct);
+  IntakeR.spin(reverse, 40, pct);
   task::sleep(time);
   TopIndexer.stop(brake);
+  IntakeR.stop();
 }
 
 /////////////////////////////////////////////////////
@@ -863,6 +865,75 @@ void SlipForwardIntakePD(double goal, float KP,float KI,float KD, double slewMax
         
         RB.spin(forward,lateralmotorpower,pct);
         RF.spin(forward,lateralmotorpower,pct);
+      
+    
+      
+      prevError = error;
+      prevMotorPower = lateralmotorpower;
+
+      counter++;
+      task::sleep(10);
+      }
+      
+
+  DriveBreak();
+}
+
+
+void SlipForwardIntakePDR(double goal, float KP,float KI,float KD, double slewMaxChange, double degree){ // revert for skills
+  
+  resetEnc(); // resets the Enc
+  Inertial_reset();
+  //Error// 
+  double error = goal - avgEnc();
+  //Previous Error//
+  double prevError = 0; 
+  //Derivative//
+  double derivative;
+  double totalerror;
+  //lateral motor power//
+  double lateralmotorpower;
+  double prevMotorPower = 0;
+  bool stop = false;
+  int counter = 0;
+
+
+
+  while (error > 3 && counter < 150) {
+      /*if (Inertial1_acceleration() < 0 || Inertial2_acceleration() < 0 ) {
+      IntakeL.stop();
+      IntakeR.stop();
+      } else {*/
+        error = goal - avgEnc();
+      derivative = error - prevError;
+      totalerror += error;
+
+      lateralmotorpower = (error * KP + totalerror * KI + derivative * KD);
+
+      if (lateralmotorpower - prevMotorPower > slewMaxChange) {
+        lateralmotorpower = prevMotorPower + slewMaxChange;
+      }
+
+  
+        IntakeR.spin(directionType::fwd, 140, vex::velocityUnits::pct);
+        IntakeL.spin(directionType::fwd, 140, vex::velocityUnits::pct);
+        BottomIndexer.spin(directionType::rev, 60, vex::velocityUnits::pct);
+        TopIndexer.spin(directionType::rev, 40, vex::velocityUnits::pct);
+        if (Inertail_rotation() < degree && !stop) {
+          
+
+          RB.spin(forward, 60 ,pct);
+          RF.spin(forward, 60 ,pct);
+        } else {
+          LB.spin(fwd, lateralmotorpower, pct);
+          LF.spin(fwd, lateralmotorpower, pct);
+          stop = true;
+        }
+
+        LB.spin(fwd, lateralmotorpower, pct);
+        LF.spin(fwd, lateralmotorpower, pct);
+        
+        
       
     
       

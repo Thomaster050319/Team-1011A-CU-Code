@@ -89,8 +89,8 @@ void visionAlign(vex::vision::signature objSig, double lDivide, double rDivide) 
 
 void worlds(){
   vexDelay(3000);
-  SlipForwardIntakePD(2300, 0.11, 0, 0.05, 100, 10);
-  cycleM(1120);
+  SlipForwardIntakePDR(2300, 0.11, 0, 0.05, 100, 10);
+  /*cycleM(1120);
   vexDelay(100);
   BackwardPD(1150, 0.1310, 0.5, 10);
   vexDelay(180);
@@ -117,7 +117,7 @@ void worlds(){
   TurnRightPD(80, 0.8, 0.3);
   vexDelay(100);
   ForwardIntakePD(3000, 0.12, 0, 0.3, 4);
-  cycleM(800);
+  cycleM(800);*/
 
 
 }
@@ -125,11 +125,12 @@ void worlds(){
 
 void worldsW(){
   vexDelay(3000);
-  SlipForwardIntakePD(2300, 0.11, 0, 0.05, 100, 10);
+  SlipForwardIntakePDR(2300, 0.11, 0, 0.05, 100, 10);
   cycleM(1080);
   vexDelay(100);
-  BackwardPD(1100, 0.1310, 0.5, 10);
-  vexDelay(300);
+  BackwardPD(1100, 0.1310, 0.5, 10);    
+  
+  /*vexDelay(300);
   TurnRightPD(129, 0.45, 0.5);
   vexDelay(200);
   LF.spin(reverse, 60, percent);
@@ -141,7 +142,7 @@ void worldsW(){
   LB.stop();
   RF.stop();
   RB.stop();
-  distanceForwardIntakePD(2680, 0.1 , 0, 0.01, 0.2);
+  distanceForwardIntakePD(2530, 0.1 , 0, 0.01, 0.2);
   vexDelay(200);
   TopIndexer.stop(coast);
   BottomIndexer.stop(coast);
@@ -155,13 +156,13 @@ void worldsW(){
   LF.stop(coast);
   LB.stop(coast);
 
-  /*vexDelay(200);
+  vexDelay(200);
   BackwardNPD(1700, 0.13, 0.3, 6);
   vexDelay(100);
   TurnRightPD(90,0.7,0.5);
   ForwardIntakePD(3000,0.12,0,0.3,10);
   cycleM(1125);
- /* TurnRightPD(86, 0.8, 0.3);
+ TurnRightPD(86, 0.8, 0.3);
   vexDelay(100);
   ForwardIntakePD(3000, 0.12, 0, 0.3, 4);
   cycleM(800);*/
@@ -177,13 +178,105 @@ void visionTest() {
 
 
 
+
 void worldsWS(){
-  vexDelay(3000);
+  vex::thread autoTimer = thread(autonTimer);
   SlipForwardIntakePD(2300, 0.11, 0, 0.05, 100, 10);
-  cycleM(1080);
+  //SlipForwardIntakePDR(2000, 0.11, 0, 0.05, 100, 20);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  cycleM(950);
   vexDelay(100);
   BackwardPD(800,0.13,0.5,10);
-  TurnLeftPD(135, 0.45, 0.5);
+ /* TurnLeftPD(135, 0.45, 0.5);
   LF.spin(reverse, 60, percent);
   LB.spin(reverse, 60, percent);
   RF.spin(reverse, 60, percent);
@@ -195,12 +288,17 @@ void worldsWS(){
   RB.stop();
   ForwardPD(4650,0.11,0,0.05, 0.5);
   TurnRightPD(43,0.8,0.2);
-  ForwardIntakePD(900, 0.11, 0, 0.05, 2);
+  IntakeL.spin(forward, 140, pct);
+  IntakeR.spin(forward, 140, pct);
   vexDelay(300);
+  ForwardPD(1100, 0.11, 0, 0.05, 2);
+  IntakeL.stop();
+  IntakeR.stop();
+  BottomIndexer.spin(forward, 140, percent);
+  TopIndexer.spin(reverse, 140, percent);
   //forwardiS();
-  cycleMS(1060);
   //BottomIndexer.spin(forward, 140, pct);
-  //TopIndexer.spin(forward, 140, pct);
+  //TopIndexer.spin(forward, 140, pct);*/
   
   
 }

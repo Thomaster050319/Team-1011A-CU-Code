@@ -29,6 +29,7 @@ int Inertail_rotation();
 void Inertial_reset();
 void DriveBreak();
 void distanceForwardIntakePD(double goal, float KP,float KI,float KD, double slewMaxChange);
+void SlipForwardIntakePDR(double goal, float KP,float KI,float KD, double slewMaxChange, double degree);
 void worldsWS();
 void cycleMS(int time);
 void forwardiS();
@@ -37,3 +38,6 @@ void forwardiS();
 void worlds();
 void worldsW();
 void visionTest();
+
+int autonTimer();
+extern int timeBoi;
