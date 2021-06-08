@@ -68,11 +68,39 @@ void test2() {
 }
 
 
+
+
 double drivetrainTemp() {
   return (LB.temperature() + LF.temperature() + RB.temperature() + RF.temperature()) / 4;
 }
 
+
+int currentBallColor = 0; // 0 means no balls detected yet, 1 = blue ball last detected, 2 = red ball last detected
+
+
+// function that updates the ball color last detected
+int betterBallColor() {
+  // run forever
+  while (true) {
+
+    // if the color blue is detected
+    if (intakeOptical.color() == vex::color::blue) {
+      currentBallColor = 1; // current ball color = blue
+
+      // if the color red is detected
+    } else if (intakeOptical.color() == vex::color::red) {
+      currentBallColor = 2; // current ball color = red
+    }
+
+  // delay so cpu resources arent wasted
+  wait(10, msec);
+  }
+  return 0; // return a value for function to be valid
+}
+
+// function that updates brain screen
 int brainScreen() {
+
   // draw boxes here so we dont waste cpu resources
   Brain.Screen.setPenColor(white);
   Brain.Screen.setFillColor(transparent);
@@ -88,10 +116,16 @@ int brainScreen() {
     Brain.Screen.setFont(monoL);
     
     // display text in the boxes
-    Brain.Screen.printAt(20, 150, "Battery:");
-    Brain.Screen.printAt(20, 200, "%d percent", Inertail_rotation());
-    Brain.Screen.printAt(250, 175, "DriveTemp: %d ", (LB.temperature() + LF.temperature() + RB.temperature() + RF.temperature()) / 4);
-    // sleep 1000 msecs
+    Brain.Screen.printAt(20, 150, "Heading:");
+    Brain.Screen.printAt(20, 200, "%d degrees", Inertail_rotation());
+    // switch for ball color
+    switch (currentBallColor) {
+      case 0: Brain.Screen.printAt(250, 175, "No ball detected"); // if no ball has been detected yet
+      case 1: Brain.Screen.printAt(250, 175, "Blue Intaked"); // if a blue ball was last detected
+      case 2: Brain.Screen.printAt(250, 175, "Red Intaked"); // if a red ball was last detected
+    }
+
+    // sleep 10 msecs
     this_thread::sleep_for(10);
     // clear the line
     Brain.Screen.clearLine(20, 200);
@@ -105,7 +139,8 @@ void pre_auton(){
   // Initializing Robot Configuration. DO NOT REMOVE!
 
 
-  task BrainScreen = task(brainScreen);
+  task BrainScreen = task(brainScreen); // run brain screen task
+  thread ballColorUpdater = thread(betterBallColor); // ball color updater
 }
 
 void intakeOut() {

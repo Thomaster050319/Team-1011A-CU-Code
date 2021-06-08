@@ -25,6 +25,7 @@ extern inertial inertial2;
 extern inertial inertial3;
 extern distance distanceL;
 extern distance distanceR;
+extern optical intakeOptical;
 
 //extern accelerometer accelY;
 extern encoder lTrackingWheel;

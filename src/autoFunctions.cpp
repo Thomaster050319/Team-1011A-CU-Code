@@ -176,7 +176,7 @@ void ForwardIntakePD(double goal, float KP,float KI,float KD, double slewMaxChan
   double prevError = 0; 
   //Derivative//
   double derivative;
-  double totalerror;
+  double totalerror = 0;
   //lateral motor power//
   double lateralmotorpower;
   double prevMotorPower = 0;
@@ -752,7 +752,7 @@ void SmoothLeftIntakePD(double goal, float KP, float KI, float KD, double slewMa
   //Derivative//
   double derivative;
   double turnDerivative;
-  double totalerror;
+  double totalerror = 0;
   //lateral motor power//
   double lateralmotorpower;
   double prevMotorPower = 0;
@@ -825,7 +825,7 @@ void SlipForwardIntakePD(double goal, float KP,float KI,float KD, double slewMax
   double prevError = 0; 
   //Derivative//
   double derivative;
-  double totalerror;
+  double totalerror = 0;
   //lateral motor power//
   double lateralmotorpower;
   double prevMotorPower = 0;
@@ -890,7 +890,7 @@ void SlipForwardIntakePDR(double goal, float KP,float KI,float KD, double slewMa
   double prevError = 0; 
   //Derivative//
   double derivative;
-  double totalerror;
+  double totalerror = 0;
   //lateral motor power//
   double lateralmotorpower;
   double prevMotorPower = 0;
@@ -958,7 +958,7 @@ void StrafePD(double goal, float KP,float KI,float KD, double slewMaxChange){ //
   double prevError = 0; 
   //Derivative//
   double derivative;
-  double totalerror;
+  double totalerror = 0;
   //lateral motor power//
   double lateralmotorpower;
   double prevMotorPower = 0;
@@ -1010,7 +1010,7 @@ void distanceForwardIntakePD(double goal, float KP,float KI,float KD, double sle
   double prevError = 0; 
   //Derivative//
   double derivative;
-  double totalerror;
+  double totalerror = 0;
   //lateral motor power//
   double lateralmotorpower;
   double prevMotorPower = 0;

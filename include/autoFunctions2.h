@@ -41,3 +41,4 @@ void visionTest();
 
 int autonTimer();
 extern int timeBoi;
+extern int currentBallColor;

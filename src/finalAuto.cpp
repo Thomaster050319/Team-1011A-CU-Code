@@ -122,15 +122,22 @@ void worlds(){
 
 }
 
+///////////////////////////////////////////////////////////////
+// Main competition autonomous, works most consistently
+//////////////////
 
 void worldsW(){
   vexDelay(3000);
-  SlipForwardIntakePDR(2300, 0.11, 0, 0.05, 100, 10);
+  SlipForwardIntakePD(2300, 0.11, 0, 0.05, 100, 10);
   cycleM(1080);
+  // while loop so the bot continues cycling until the correct ball has last been detected
+  while (currentBallColor != 1) {
+    cycleM(200);
+  }
   vexDelay(100);
   BackwardPD(1100, 0.1310, 0.5, 10);    
   
-  /*vexDelay(300);
+  vexDelay(300);
   TurnRightPD(129, 0.45, 0.5);
   vexDelay(200);
   LF.spin(reverse, 60, percent);
@@ -155,17 +162,22 @@ void worldsW(){
   RB.stop(coast);
   LF.stop(coast);
   LB.stop(coast);
-
   vexDelay(200);
   BackwardNPD(1700, 0.13, 0.3, 6);
   vexDelay(100);
   TurnRightPD(90,0.7,0.5);
   ForwardIntakePD(3000,0.12,0,0.3,10);
   cycleM(1125);
- TurnRightPD(86, 0.8, 0.3);
+  while (currentBallColor != 1) {
+    cycleM(200);
+  }
+  TurnRightPD(86, 0.8, 0.3);
   vexDelay(100);
   ForwardIntakePD(3000, 0.12, 0, 0.3, 4);
-  cycleM(800);*/
+  while (currentBallColor != 1) {
+    cycleM(200);
+  }
+  cycleM(800);
 }
 
 void visionTest() {
@@ -183,96 +195,6 @@ void worldsWS(){
   vex::thread autoTimer = thread(autonTimer);
   SlipForwardIntakePD(2300, 0.11, 0, 0.05, 100, 10);
   //SlipForwardIntakePDR(2000, 0.11, 0, 0.05, 100, 20);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   cycleM(950);
   vexDelay(100);
   BackwardPD(800,0.13,0.5,10);

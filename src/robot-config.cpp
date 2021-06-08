@@ -24,13 +24,14 @@ inertial inertial2 = inertial(PORT10); // 10
 inertial inertial3 = inertial(PORT17); // 17
 distance distanceL = distance(PORT3); // 3
 distance distanceR = distance(PORT4); // 4
+optical intakeOptical = optical(PORT15); // 15
 //accelerometer accelY = accelerometer(Brain.ThreeWirePort.E); //E
 
 //limit limit1 = limit(Brain.ThreeWirePort.D); // D
 
-encoder rTrackingWheel = encoder(Brain.ThreeWirePort.A);
-encoder lTrackingWheel = encoder(Brain.ThreeWirePort.C);
-encoder mTrackingWheel = encoder(Brain.ThreeWirePort.E);
+encoder rTrackingWheel = encoder(Brain.ThreeWirePort.A); // Ports A and B
+encoder lTrackingWheel = encoder(Brain.ThreeWirePort.C); // Ports C and D
+encoder mTrackingWheel = encoder(Brain.ThreeWirePort.E); // Ports E and F
 
 //𝕮𝖔𝖓𝖙𝖗𝖔𝖑𝖑𝖊𝖗 𝕮𝖔𝖓𝖋𝖎𝖌//
 controller Controller1 = controller(primary);
