@@ -13,18 +13,19 @@ We Used:
 -Custom Inertial Collision detection Algorithm
 -Inertial Sensor for turning offset angle(deg) 
 -Custom Slew 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Contributors: 
 
-Thomas Lee : Main Builder/ Designer / Driver, Programmer. 
+𝐓𝐡𝐨𝐦𝐚𝐬 𝐋𝐞𝐞 : Main Builder/ Designer / Driver, Programmer. 
  
  - Developed : Auto Functions For PD Auto Drive functions, PD Auto Turn Function Using v5 Inertial Sensor, User-Control, Function for Custom-Indexer.
 
-Liam Teale : Main Programmer
+𝐋𝐢𝐚𝐦 𝐓𝐞𝐚𝐥𝐞 : Main Programmer
 
  - Developed : Vision Tracking Algorithms, Collision Detection Using Inertial Sensor, Custom Slew PD
 
-Justin An : Designer / Builder
+𝐉𝐮𝐬𝐭𝐢𝐧 𝐀𝐧 : Designer / Builder
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
