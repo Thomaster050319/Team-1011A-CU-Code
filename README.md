@@ -1,4 +1,4 @@
-This is a Code for Team 1011A in 2019-2020 VRC Season 'Change Up'
+𝙏𝙝𝙞𝙨 𝙞𝙨 𝙖 𝘾𝙤𝙙𝙚 𝙛𝙤𝙧 𝙏𝙚𝙖𝙢 1011𝘼 𝙞𝙣 2020-2021 𝙑𝙍𝘾 𝙎𝙚𝙖𝙨𝙤𝙣 '𝘾𝙝𝙖𝙣𝙜𝙚 𝙐𝙥'
 
 Our contains main functions for following subsystems: 
 
